@@ -59,3 +59,4 @@ Native cold start opens **`home.lynx.bundle`** (Android `SplashActivity`, iOS `S
 - Restyling controls with brand hex gradients instead of Luna tokens.
 - Pointing splash / launch URLs back at `main.lynx.bundle`.
 - Assuming lynx-ui ships Card/Chip — it does not; compose with tokens.
+- Calling `sparkling-navigation` `open({ scheme })` without a callback — it no-ops. Use `openScheme()` from `src/lib/navigation.ts`.

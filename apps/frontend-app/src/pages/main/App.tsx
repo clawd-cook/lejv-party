@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from '@lynx-js/react'
 import { Button, ScrollView } from '@lynx-js/lynx-ui'
-import * as router from 'sparkling-navigation'
+
+import { openScheme } from '../../lib/navigation.js'
 
 import './App.css'
 
@@ -13,7 +14,7 @@ export function App(props: { onMounted?: () => void }) {
   }, [props])
 
   const openSecondPage = useCallback(() => {
-    router.open({ scheme: secondPageScheme })
+    void openScheme(secondPageScheme)
   }, [secondPageScheme])
 
   return (

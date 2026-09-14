@@ -12,9 +12,9 @@ import {
   KeyboardAwareRoot,
   KeyboardAwareTrigger,
 } from '@lynx-js/lynx-ui'
-import * as router from 'sparkling-navigation'
 
 import { ensureApiClientConfigured } from '../../lib/api.js'
+import { openScheme } from '../../lib/navigation.js'
 import { buildRoomScheme } from '../../lib/room-params.js'
 
 import './App.css'
@@ -44,7 +44,7 @@ export function App(props: { onMounted?: () => void }) {
 
   const openRoom = useCallback((roomId: string, playerId: string) => {
     savePlayerId(roomId, playerId)
-    router.open({ scheme: buildRoomScheme(roomId, playerId) })
+    return openScheme(buildRoomScheme(roomId, playerId))
   }, [])
 
   const onCreate = useCallback(() => {
@@ -59,12 +59,12 @@ export function App(props: { onMounted?: () => void }) {
     setCreating(true)
     ensureApiClientConfigured()
     void createRoom(nickname)
-      .then((result) => {
-        openRoom(result.roomId, result.playerId)
-      })
+      .then((result) => openRoom(result.roomId, result.playerId))
       .catch((err: unknown) => {
         if (err instanceof ApiRequestError) {
           setCreateError(mapApiErrorBody(err.body))
+        } else if (err instanceof Error && err.message) {
+          setCreateError(err.message)
         } else {
           setCreateError('创建房间失败，请重试')
         }
@@ -92,12 +92,12 @@ export function App(props: { onMounted?: () => void }) {
     setJoining(true)
     ensureApiClientConfigured()
     void joinRoom(roomId, nickname)
-      .then((result) => {
-        openRoom(roomId, result.playerId)
-      })
+      .then((result) => openRoom(roomId, result.playerId))
       .catch((err: unknown) => {
         if (err instanceof ApiRequestError) {
           setJoinError(mapApiErrorBody(err.body))
+        } else if (err instanceof Error && err.message) {
+          setJoinError(err.message)
         } else {
           setJoinError('加入房间失败，请重试')
         }
