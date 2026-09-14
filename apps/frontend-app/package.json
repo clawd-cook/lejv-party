@@ -14,7 +14,8 @@
     "@lejv-party/client-core": "*",
     "@lejv-party/domain": "*",
     "@lynx-js/react": "^0.116.2",
-    "sparkling-navigation": "^2.0.1"
+    "sparkling-navigation": "^2.0.1",
+    "@lynx-js/lynx-ui": "^3.138.0"
   },
   "devDependencies": {
     "@lynx-js/qrcode-rsbuild-plugin": "^0.4.4",

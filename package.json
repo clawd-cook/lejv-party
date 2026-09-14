@@ -19,8 +19,5 @@
   "workspaces": [
     "packages/*",
     "apps/*"
-  ],
-  "dependencies": {
-    "@lynx-js/lynx-ui": "^3.138.0"
-  }
+  ]
 }
