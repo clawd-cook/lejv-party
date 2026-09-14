@@ -10,7 +10,7 @@ tags: [process, cicd, github-actions, automation, release, vercel, production, f
 ## Workflow Overview
 
 **Purpose**: Cut a production release by promoting Ready Vercel **preview** deployments of `frontend-web` and `backend` to **Production**, packaging `frontend-app` install/QR deliverables against the production API origin, and publishing a versioned **GitHub Release** with those artifacts and release notes.
-**Trigger Events**: Semver (or `v*`) git tag push; manual `workflow_dispatch` with explicit version / optional deployment selectors; optional `release` event if operators create a draft Release first (implementation may pick one primary trigger).
+**Trigger Events**: Semver-like git tag push (`v[0-9]*`, e.g. `v1.2.3`); manual `workflow_dispatch` with explicit version / optional deployment selectors.
 **Target Environments**: Vercel Production for projects `lejv-party-frontend-web` and `lejv-party-backend` (team `clawd-cook`); GitHub Releases for app packages / notes; device sideload / LynxExplorer for app artifacts.
 
 ## Execution Flow Diagram

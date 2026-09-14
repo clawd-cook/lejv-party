@@ -2,11 +2,15 @@ name: Production release
 
 # Spec: spec/spec-process-cicd-production-release.md
 # Promote Ready Vercel previews (web + backend) → Production, package app, publish GitHub Release.
+#
+# Auto-trigger: any git tag push whose name starts with v + a digit (e.g. v1.0.0, v0.2.1-rc.1).
+# Manual: workflow_dispatch with optional overrides.
 
 on:
   push:
     tags:
-      - 'v*'
+      # Matches v1, v1.2.3, v0.0.0-beta — not arbitrary tags like "validation".
+      - 'v[0-9]*'
   workflow_dispatch:
     inputs:
       version:
