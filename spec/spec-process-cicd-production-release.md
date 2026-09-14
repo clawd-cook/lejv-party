@@ -1,6 +1,6 @@
 ---
 title: CI/CD Workflow Specification - Production Release (Vercel Promote + App Package + GitHub Release)
-version: 1.0
+version: 1.1
 date_created: 2026-09-14
 last_updated: 2026-09-14
 owner: DevOps Team
@@ -315,12 +315,31 @@ release_body: string                 # includes SHA, Vercel IDs, smoke results, 
 
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
+| 1.1 | 2026-09-14 | Implementation: `.github/workflows/production-release.yml` + `.github/scripts/resolve-vercel-preview.mjs` | heyongqi10 |
 | 1.0 | 2026-09-14 | Initial specification: promote Vercel web+backend preview → Production, package app, publish GitHub Release | heyongqi10 |
 
 ## Related Specifications
 
+- Workflow implementation: `.github/workflows/production-release.yml`
+- Preview resolver: `.github/scripts/resolve-vercel-preview.mjs`
 - Frontend-app packages: `spec/spec-process-cicd-frontend-app-install-or-qr.md`
 - Frontend-web Pages (legacy/alternate static path): `spec/spec-process-cicd-frontend-web-github-pages.md`
 - Backend Vercel deploy contract: `.trellis/spec/backend/backend/vercel-deploy.md`
 - Production API origin / client bake-in: `.trellis/spec/guides/room-party-api-contract.md` (and task `09-14-prod-backend-url`)
 - Vercel projects: `clawd-cook/lejv-party-backend`, `clawd-cook/lejv-party-frontend-web`
+
+## Implementation Notes (ops)
+
+Required before first real promote:
+
+| Kind | Name | Example / notes |
+|------|------|-----------------|
+| Secret | `VERCEL_TOKEN` | Vercel access token |
+| Variable or Secret | `VERCEL_ORG_ID` | Team id for `clawd-cook` (see local `.vercel/project.json` `orgId`) |
+| Variable or Secret | `VERCEL_PROJECT_ID_BACKEND` | `lejv-party-backend` (`apps/backend/.vercel/project.json` → `projectId`) |
+| Variable or Secret | `VERCEL_PROJECT_ID_WEB` | `lejv-party-frontend-web` (`apps/frontend-web/.vercel/project.json` → `projectId`) |
+| Variable | `PRODUCTION_BACKEND_ORIGIN` | Optional; defaults to `https://www.lejv-party-backend.casa` |
+| Variable | `PRODUCTION_WEB_ORIGIN` | Required for web smoke unless `skip_smoke` |
+| Environment | `production` | Optional reviewers for promote job |
+
+Happy path: ensure Ready previews exist for the release SHA → push `v*` tag (or dispatch) → workflow promotes backend then web → packages Android debug APK + Lynx bundles → publishes GitHub Release.

@@ -1,0 +1,671 @@
+name: Production release
+
+# Spec: spec/spec-process-cicd-production-release.md
+# Promote Ready Vercel previews (web + backend) → Production, package app, publish GitHub Release.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release tag (e.g. v1.2.3). Empty = use ref name / generate from SHA.'
+        required: false
+        type: string
+      target_sha:
+        description: 'Commit SHA for preview selection (default: tag peel / HEAD)'
+        required: false
+        type: string
+      changelog:
+        description: 'Extra Release notes (markdown)'
+        required: false
+        type: string
+      backend_preview_url:
+        description: 'Override backend preview deployment URL/ID'
+        required: false
+        type: string
+      web_preview_url:
+        description: 'Override frontend-web preview deployment URL/ID'
+        required: false
+        type: string
+      promote_mode:
+        description: 'promote-preview (default) or rebuild-prod fallback'
+        type: choice
+        options:
+          - promote-preview
+          - rebuild-prod
+        default: promote-preview
+      app_deliverable_mode:
+        description: 'App package mode'
+        type: choice
+        options:
+          - android
+          - qr
+          - both
+        default: android
+      dry_run:
+        description: 'Resolve only; no promote / no Release mutate'
+        type: boolean
+        default: false
+      skip_promote:
+        description: 'Skip Vercel promote (package + Release only)'
+        type: boolean
+        default: false
+      skip_app_package:
+        description: 'Skip frontend-app packaging'
+        type: boolean
+        default: false
+      skip_smoke:
+        description: 'Skip production HTTP smoke (emergency only)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: production-release
+  cancel-in-progress: false
+
+env:
+  VERCEL_SCOPE: clawd-cook
+  # Pin CLI for CI reproducibility (token via env VERCEL_TOKEN; do not pass --token).
+  VERCEL_CLI_VERSION: '46.0.2'
+  DEFAULT_BACKEND_ORIGIN: https://www.lejv-party-backend.casa
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.id.outputs.version }}
+      target_sha: ${{ steps.id.outputs.target_sha }}
+      dry_run: ${{ steps.id.outputs.dry_run }}
+      skip_promote: ${{ steps.id.outputs.skip_promote }}
+      skip_app_package: ${{ steps.id.outputs.skip_app_package }}
+      skip_smoke: ${{ steps.id.outputs.skip_smoke }}
+      promote_mode: ${{ steps.id.outputs.promote_mode }}
+      app_mode: ${{ steps.id.outputs.app_mode }}
+      changelog: ${{ steps.id.outputs.changelog }}
+      backend_url: ${{ steps.previews.outputs.backend_url }}
+      backend_id: ${{ steps.previews.outputs.backend_id }}
+      backend_source: ${{ steps.previews.outputs.backend_source }}
+      web_url: ${{ steps.previews.outputs.web_url }}
+      web_id: ${{ steps.previews.outputs.web_id }}
+      web_source: ${{ steps.previews.outputs.web_source }}
+      backend_origin: ${{ steps.id.outputs.backend_origin }}
+      web_origin: ${{ steps.id.outputs.web_origin }}
+      sha_mismatch_warning: ${{ steps.previews.outputs.sha_mismatch_warning }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release identity
+        id: id
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+          INPUT_SHA: ${{ github.event.inputs.target_sha }}
+          INPUT_CHANGELOG: ${{ github.event.inputs.changelog }}
+          INPUT_DRY: ${{ github.event.inputs.dry_run }}
+          INPUT_SKIP_PROMOTE: ${{ github.event.inputs.skip_promote }}
+          INPUT_SKIP_APP: ${{ github.event.inputs.skip_app_package }}
+          INPUT_SKIP_SMOKE: ${{ github.event.inputs.skip_smoke }}
+          INPUT_PROMOTE_MODE: ${{ github.event.inputs.promote_mode }}
+          INPUT_APP_MODE: ${{ github.event.inputs.app_deliverable_mode }}
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${INPUT_VERSION:-}"
+            TARGET_SHA="${INPUT_SHA:-${{ github.sha }}}"
+            DRY_RUN="${INPUT_DRY:-false}"
+            SKIP_PROMOTE="${INPUT_SKIP_PROMOTE:-false}"
+            SKIP_APP="${INPUT_SKIP_APP:-false}"
+            SKIP_SMOKE="${INPUT_SKIP_SMOKE:-false}"
+            PROMOTE_MODE="${INPUT_PROMOTE_MODE:-promote-preview}"
+            APP_MODE="${INPUT_APP_MODE:-android}"
+            CHANGELOG="${INPUT_CHANGELOG:-}"
+          else
+            VERSION="${GITHUB_REF_NAME}"
+            TARGET_SHA="${{ github.sha }}"
+            DRY_RUN="false"
+            SKIP_PROMOTE="false"
+            SKIP_APP="false"
+            SKIP_SMOKE="false"
+            PROMOTE_MODE="promote-preview"
+            APP_MODE="android"
+            CHANGELOG=""
+          fi
+
+          if [ -z "$VERSION" ]; then
+            VERSION="v0.0.0-${TARGET_SHA:0:7}"
+          fi
+          case "$VERSION" in
+            v*) ;;
+            *) VERSION="v${VERSION}" ;;
+          esac
+
+          BACKEND_ORIGIN="${{ vars.PRODUCTION_BACKEND_ORIGIN }}"
+          if [ -z "$BACKEND_ORIGIN" ]; then
+            BACKEND_ORIGIN="${DEFAULT_BACKEND_ORIGIN}"
+          fi
+          WEB_ORIGIN="${{ vars.PRODUCTION_WEB_ORIGIN }}"
+
+          {
+            echo "version=${VERSION}"
+            echo "target_sha=${TARGET_SHA}"
+            echo "dry_run=${DRY_RUN}"
+            echo "skip_promote=${SKIP_PROMOTE}"
+            echo "skip_app_package=${SKIP_APP}"
+            echo "skip_smoke=${SKIP_SMOKE}"
+            echo "promote_mode=${PROMOTE_MODE}"
+            echo "app_mode=${APP_MODE}"
+            echo "backend_origin=${BACKEND_ORIGIN}"
+            echo "web_origin=${WEB_ORIGIN}"
+          } >> "$GITHUB_OUTPUT"
+
+          # changelog may be multiline
+          {
+            echo "changelog<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## Resolve release identity"
+            echo ""
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| version | \`${VERSION}\` |"
+            echo "| target_sha | \`${TARGET_SHA}\` |"
+            echo "| dry_run | \`${DRY_RUN}\` |"
+            echo "| skip_promote | \`${SKIP_PROMOTE}\` |"
+            echo "| skip_app_package | \`${SKIP_APP}\` |"
+            echo "| skip_smoke | \`${SKIP_SMOKE}\` |"
+            echo "| promote_mode | \`${PROMOTE_MODE}\` |"
+            echo "| app_mode | \`${APP_MODE}\` |"
+            echo "| backend_origin | \`${BACKEND_ORIGIN}\` |"
+            echo "| web_origin | \`${WEB_ORIGIN:-"(unset)"}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Require Vercel credentials when promoting
+        if: steps.id.outputs.dry_run != 'true' && steps.id.outputs.skip_promote != 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VAR_BACKEND_PROJECT: ${{ vars.VERCEL_PROJECT_ID_BACKEND }}
+          SEC_BACKEND_PROJECT: ${{ secrets.VERCEL_PROJECT_ID_BACKEND }}
+          VAR_WEB_PROJECT: ${{ vars.VERCEL_PROJECT_ID_WEB }}
+          SEC_WEB_PROJECT: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+        run: |
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "::error::secrets.VERCEL_TOKEN is required to promote (or set dry_run / skip_promote)."
+            exit 1
+          fi
+          BACKEND_PROJECT="${VAR_BACKEND_PROJECT:-$SEC_BACKEND_PROJECT}"
+          WEB_PROJECT="${VAR_WEB_PROJECT:-$SEC_WEB_PROJECT}"
+          if [ -z "$BACKEND_PROJECT" ]; then
+            echo "::error::Set vars.VERCEL_PROJECT_ID_BACKEND (or secret) for lejv-party-backend."
+            exit 1
+          fi
+          if [ -z "$WEB_PROJECT" ]; then
+            echo "::error::Set vars.VERCEL_PROJECT_ID_WEB (or secret) for lejv-party-frontend-web."
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        if: steps.id.outputs.skip_promote != 'true' || steps.id.outputs.dry_run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.20.0'
+
+      - name: Resolve Ready preview deployments
+        id: previews
+        if: steps.id.outputs.skip_promote != 'true' || steps.id.outputs.dry_run == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VAR_ORG: ${{ vars.VERCEL_ORG_ID }}
+          SEC_ORG: ${{ secrets.VERCEL_ORG_ID }}
+          VAR_BACKEND_PROJECT: ${{ vars.VERCEL_PROJECT_ID_BACKEND }}
+          SEC_BACKEND_PROJECT: ${{ secrets.VERCEL_PROJECT_ID_BACKEND }}
+          VAR_WEB_PROJECT: ${{ vars.VERCEL_PROJECT_ID_WEB }}
+          SEC_WEB_PROJECT: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+          BACKEND_URL_OVERRIDE: ${{ github.event.inputs.backend_preview_url }}
+          WEB_URL_OVERRIDE: ${{ github.event.inputs.web_preview_url }}
+          TARGET_SHA: ${{ steps.id.outputs.target_sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "::error::VERCEL_TOKEN required to resolve previews (even for dry_run)."
+            exit 1
+          fi
+
+          export VERCEL_ORG_ID="${VAR_ORG:-$SEC_ORG}"
+          BACKEND_PROJECT="${VAR_BACKEND_PROJECT:-$SEC_BACKEND_PROJECT}"
+          WEB_PROJECT="${VAR_WEB_PROJECT:-$SEC_WEB_PROJECT}"
+          if [ -z "$BACKEND_PROJECT" ] || [ -z "$WEB_PROJECT" ]; then
+            echo "::error::VERCEL_PROJECT_ID_BACKEND and VERCEL_PROJECT_ID_WEB must be set (vars or secrets)."
+            exit 1
+          fi
+
+          BACKEND_ARGS=(--project-id "$BACKEND_PROJECT" --sha "$TARGET_SHA" --name backend)
+          if [ -n "${BACKEND_URL_OVERRIDE:-}" ]; then
+            BACKEND_ARGS+=(--url "$BACKEND_URL_OVERRIDE")
+          fi
+          node .github/scripts/resolve-vercel-preview.mjs "${BACKEND_ARGS[@]}" | tee /tmp/backend-preview.json
+
+          WEB_ARGS=(--project-id "$WEB_PROJECT" --sha "$TARGET_SHA" --name web)
+          if [ -n "${WEB_URL_OVERRIDE:-}" ]; then
+            WEB_ARGS+=(--url "$WEB_URL_OVERRIDE")
+          fi
+          node .github/scripts/resolve-vercel-preview.mjs "${WEB_ARGS[@]}" | tee /tmp/web-preview.json
+
+          WARN=""
+          if [ -n "${BACKEND_URL_OVERRIDE:-}${WEB_URL_OVERRIDE:-}" ]; then
+            WARN="Explicit preview URL override in use; verify SHA alignment in Release notes."
+          fi
+          echo "sha_mismatch_warning=${WARN}" >> "$GITHUB_OUTPUT"
+
+          B_URL="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/backend-preview.json","utf8")).url')"
+          B_ID="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/backend-preview.json","utf8")).id')"
+          B_SRC="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/backend-preview.json","utf8")).source')"
+          W_URL="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/web-preview.json","utf8")).url')"
+          W_ID="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/web-preview.json","utf8")).id')"
+          W_SRC="$(node -p 'JSON.parse(require("fs").readFileSync("/tmp/web-preview.json","utf8")).source')"
+
+          {
+            echo ""
+            echo "## Selected previews"
+            echo ""
+            echo "| App | URL | ID | Source |"
+            echo "| --- | --- | --- | --- |"
+            echo "| backend | \`${B_URL}\` | \`${B_ID}\` | \`${B_SRC}\` |"
+            echo "| web | \`${W_URL}\` | \`${W_ID}\` | \`${W_SRC}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summarize dry-run
+        if: steps.id.outputs.dry_run == 'true'
+        run: |
+          {
+            echo ""
+            echo "## Dry run"
+            echo ""
+            echo "No Vercel promote and no GitHub Release mutation."
+            echo "- Would promote backend: \`${{ steps.previews.outputs.backend_url }}\`"
+            echo "- Would promote web: \`${{ steps.previews.outputs.web_url }}\`"
+            echo "- Would package app mode: \`${{ steps.id.outputs.app_mode }}\`"
+            echo "- Would publish Release: \`${{ steps.id.outputs.version }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  promote:
+    needs: resolve
+    if: needs.resolve.outputs.dry_run != 'true' && needs.resolve.outputs.skip_promote != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VAR_ORG: ${{ vars.VERCEL_ORG_ID }}
+      SEC_ORG: ${{ secrets.VERCEL_ORG_ID }}
+      VAR_BACKEND_PROJECT: ${{ vars.VERCEL_PROJECT_ID_BACKEND }}
+      SEC_BACKEND_PROJECT: ${{ secrets.VERCEL_PROJECT_ID_BACKEND }}
+      VAR_WEB_PROJECT: ${{ vars.VERCEL_PROJECT_ID_WEB }}
+      SEC_WEB_PROJECT: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.20.0'
+
+      - name: Install Vercel CLI
+        run: npm install -g "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Export Vercel project scope
+        run: |
+          set -euo pipefail
+          echo "VERCEL_ORG_ID=${VAR_ORG:-$SEC_ORG}" >> "$GITHUB_ENV"
+          echo "VERCEL_PROJECT_ID_BACKEND=${VAR_BACKEND_PROJECT:-$SEC_BACKEND_PROJECT}" >> "$GITHUB_ENV"
+          echo "VERCEL_PROJECT_ID_WEB=${VAR_WEB_PROJECT:-$SEC_WEB_PROJECT}" >> "$GITHUB_ENV"
+
+      - name: Promote backend preview → Production
+        if: needs.resolve.outputs.promote_mode == 'promote-preview'
+        run: |
+          set -euo pipefail
+          echo "Promoting backend ${{ needs.resolve.outputs.backend_url }}"
+          vercel promote "${{ needs.resolve.outputs.backend_url }}" \
+            --yes \
+            --scope "${VERCEL_SCOPE}" \
+            --timeout 5m
+
+      - name: Rebuild backend Production (fallback)
+        if: needs.resolve.outputs.promote_mode == 'rebuild-prod'
+        run: |
+          set -euo pipefail
+          export VERCEL_PROJECT_ID="${VERCEL_PROJECT_ID_BACKEND}"
+          vercel deploy --prod --yes --scope "${VERCEL_SCOPE}" --archive=tgz --timeout 10m
+
+      - name: Smoke backend production
+        if: needs.resolve.outputs.skip_smoke != 'true'
+        env:
+          ORIGIN: ${{ needs.resolve.outputs.backend_origin }}
+        run: |
+          set -euo pipefail
+          URL="${ORIGIN%/}/api"
+          echo "GET ${URL}"
+          BODY="$(curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$URL")"
+          echo "Body: ${BODY}"
+          echo "$BODY" | grep -qi 'Hello World' || {
+            echo "::error::Backend smoke failed: expected Hello World in body"
+            exit 1
+          }
+
+      - name: Promote web preview → Production
+        if: needs.resolve.outputs.promote_mode == 'promote-preview'
+        run: |
+          set -euo pipefail
+          echo "Promoting web ${{ needs.resolve.outputs.web_url }}"
+          vercel promote "${{ needs.resolve.outputs.web_url }}" \
+            --yes \
+            --scope "${VERCEL_SCOPE}" \
+            --timeout 5m
+
+      - name: Rebuild web Production (fallback)
+        if: needs.resolve.outputs.promote_mode == 'rebuild-prod'
+        run: |
+          set -euo pipefail
+          export VERCEL_PROJECT_ID="${VERCEL_PROJECT_ID_WEB}"
+          vercel deploy --prod --yes --scope "${VERCEL_SCOPE}" --archive=tgz --timeout 10m
+
+      - name: Smoke web production
+        if: needs.resolve.outputs.skip_smoke != 'true'
+        env:
+          ORIGIN: ${{ needs.resolve.outputs.web_origin }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ORIGIN}" ]; then
+            echo "::error::vars.PRODUCTION_WEB_ORIGIN is required for web smoke (or set skip_smoke)."
+            exit 1
+          fi
+          URL="${ORIGIN%/}/"
+          echo "GET ${URL}"
+          curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$URL" -o /tmp/web-smoke.html
+          head -c 200 /tmp/web-smoke.html || true
+          echo ""
+
+      - name: Summarize promote
+        run: |
+          {
+            echo "## Promote"
+            echo ""
+            echo "- Mode: \`${{ needs.resolve.outputs.promote_mode }}\`"
+            echo "- Backend preview: \`${{ needs.resolve.outputs.backend_url }}\` (\`${{ needs.resolve.outputs.backend_id }}\`)"
+            echo "- Web preview: \`${{ needs.resolve.outputs.web_url }}\` (\`${{ needs.resolve.outputs.web_id }}\`)"
+            echo "- Backend origin: \`${{ needs.resolve.outputs.backend_origin }}\`"
+            echo "- Web origin: \`${{ needs.resolve.outputs.web_origin }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  package-app:
+    needs: [resolve, promote]
+    if: |
+      always() &&
+      needs.resolve.result == 'success' &&
+      needs.resolve.outputs.dry_run != 'true' &&
+      needs.resolve.outputs.skip_app_package != 'true' &&
+      (needs.resolve.outputs.skip_promote == 'true' || needs.promote.result == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    outputs:
+      android: ${{ steps.mode.outputs.android }}
+      qr: ${{ steps.mode.outputs.qr }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.target_sha }}
+
+      - name: Resolve mode flags
+        id: mode
+        env:
+          MODE: ${{ needs.resolve.outputs.app_mode }}
+        run: |
+          set -euo pipefail
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          case "$MODE" in
+            android)
+              echo "android=true" >> "$GITHUB_OUTPUT"
+              echo "qr=false" >> "$GITHUB_OUTPUT"
+              ;;
+            qr)
+              echo "android=false" >> "$GITHUB_OUTPUT"
+              echo "qr=true" >> "$GITHUB_OUTPUT"
+              ;;
+            both)
+              echo "android=true" >> "$GITHUB_OUTPUT"
+              echo "qr=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Unknown app_deliverable_mode: $MODE"
+              exit 1
+              ;;
+          esac
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.20.0'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared packages
+        run: npm run build:packages
+
+      - name: Unit tests frontend-app
+        run: npm run test -w frontend-app
+
+      - name: Build Lynx bundles
+        run: npm run build -w frontend-app
+
+      - name: Upload Lynx bundles
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-lynx-bundles
+          path: apps/frontend-app/dist
+          if-no-files-found: error
+
+      - name: Ensure Sparkling native module paths
+        if: steps.mode.outputs.android == 'true'
+        run: npm run ensure:native-deps -w frontend-app
+
+      - name: Setup JDK 17
+        if: steps.mode.outputs.android == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        if: steps.mode.outputs.android == 'true'
+        uses: android-actions/setup-android@v4
+
+      - name: Accept Android licenses
+        if: steps.mode.outputs.android == 'true'
+        run: yes | sdkmanager --licenses >/dev/null || true
+
+      - name: Install Android platform & build-tools
+        if: steps.mode.outputs.android == 'true'
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Assemble Android debug APK
+        if: steps.mode.outputs.android == 'true'
+        working-directory: apps/frontend-app/android
+        env:
+          SPARKLING_USE_NATIVE_ASSETS: 'true'
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload Android debug APK
+        if: steps.mode.outputs.android == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-android-debug
+          path: apps/frontend-app/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Stage release asset directory
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          shopt -s nullglob
+          bundles=(apps/frontend-app/dist/*.lynx.bundle)
+          if [ ${#bundles[@]} -eq 0 ]; then
+            echo "::error::No .lynx.bundle files found under apps/frontend-app/dist"
+            exit 1
+          fi
+          cp -f "${bundles[@]}" release-assets/
+          if [ "${{ steps.mode.outputs.android }}" = "true" ]; then
+            cp -f apps/frontend-app/android/app/build/outputs/apk/debug/*.apk release-assets/
+          fi
+          ls -la release-assets
+
+      - name: Upload staged release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-staged
+          path: release-assets
+          if-no-files-found: error
+
+  publish-release:
+    needs: [resolve, promote, package-app]
+    if: |
+      always() &&
+      needs.resolve.result == 'success' &&
+      needs.resolve.outputs.dry_run != 'true' &&
+      (needs.resolve.outputs.skip_promote == 'true' || needs.promote.result == 'success') &&
+      (needs.resolve.outputs.skip_app_package == 'true' || needs.package-app.result == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.target_sha }}
+
+      - name: Download staged assets
+        if: needs.resolve.outputs.skip_app_package != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets-staged
+          path: release-assets
+
+      - name: Setup Node.js (QR)
+        if: needs.resolve.outputs.skip_app_package != 'true' && needs.package-app.outputs.qr == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.20.0'
+          cache: npm
+
+      - name: Install deps for QR
+        if: needs.resolve.outputs.skip_app_package != 'true' && needs.package-app.outputs.qr == 'true'
+        run: npm ci
+
+      - name: Build release body
+        id: body
+        env:
+          CHANGELOG: ${{ needs.resolve.outputs.changelog }}
+          WARN: ${{ needs.resolve.outputs.sha_mismatch_warning }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Production release \`${{ needs.resolve.outputs.version }}\`"
+            echo ""
+            echo "- **Commit**: \`${{ needs.resolve.outputs.target_sha }}\`"
+            echo "- **Backend production**: \`${{ needs.resolve.outputs.backend_origin }}\`"
+            echo "- **Web production**: \`${{ needs.resolve.outputs.web_origin }}\`"
+            echo "- **Backend preview promoted**: \`${{ needs.resolve.outputs.backend_url }}\` (\`${{ needs.resolve.outputs.backend_id }}\`, source \`${{ needs.resolve.outputs.backend_source }}\`)"
+            echo "- **Web preview promoted**: \`${{ needs.resolve.outputs.web_url }}\` (\`${{ needs.resolve.outputs.web_id }}\`, source \`${{ needs.resolve.outputs.web_source }}\`)"
+            echo "- **Promote mode**: \`${{ needs.resolve.outputs.promote_mode }}\`"
+            echo "- **Skip promote**: \`${{ needs.resolve.outputs.skip_promote }}\`"
+            echo "- **App mode**: \`${{ needs.resolve.outputs.app_mode }}\`"
+            echo ""
+            if [ -n "${WARN}" ]; then
+              echo "> ${WARN}"
+              echo ""
+            fi
+            if [ -n "${CHANGELOG}" ]; then
+              echo "${CHANGELOG}"
+              echo ""
+            fi
+            echo "### Artifacts"
+            echo "- Lynx \`.lynx.bundle\` files (if packaged)"
+            echo "- Android **debug** APK (not for store) when android/both mode"
+            echo ""
+            echo "### API reminder"
+            echo "Device clients should use production origin \`${{ needs.resolve.outputs.backend_origin }}\` (or pass \`apiBaseUrl\` via scheme/global props)."
+          } > /tmp/release-body.md
+          {
+            echo "path=/tmp/release-body.md"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release (notes only)
+        if: needs.resolve.outputs.skip_app_package == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.resolve.outputs.version }}
+          name: Release ${{ needs.resolve.outputs.version }}
+          target_commitish: ${{ needs.resolve.outputs.target_sha }}
+          generate_release_notes: true
+          body_path: /tmp/release-body.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Lynx bundles + APK to GitHub Release
+        if: needs.resolve.outputs.skip_app_package != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.resolve.outputs.version }}
+          name: Release ${{ needs.resolve.outputs.version }}
+          target_commitish: ${{ needs.resolve.outputs.target_sha }}
+          generate_release_notes: true
+          body_path: /tmp/release-body.md
+          files: release-assets/*
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate QR against Release download URL
+        if: needs.resolve.outputs.skip_app_package != 'true' && needs.package-app.outputs.qr == 'true'
+        working-directory: apps/frontend-app
+        env:
+          PREVIEW_BASE_URL: https://github.com/${{ github.repository }}/releases/download/${{ needs.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp -f ../../release-assets/*.lynx.bundle dist/
+          npm run preview:qr
+          mkdir -p ../../release-assets/qr
+          cp -R preview-qr/* ../../release-assets/qr/
+
+      - name: Attach QR assets to Release
+        if: needs.resolve.outputs.skip_app_package != 'true' && needs.package-app.outputs.qr == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.resolve.outputs.version }}
+          files: release-assets/qr/*
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summarize Release
+        run: |
+          {
+            echo "## GitHub Release"
+            echo ""
+            echo "- Tag: \`${{ needs.resolve.outputs.version }}\`"
+            echo "- URL: https://github.com/${{ github.repository }}/releases/tag/${{ needs.resolve.outputs.version }}"
+          } >> "$GITHUB_STEP_SUMMARY"
