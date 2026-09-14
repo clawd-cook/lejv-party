@@ -59,3 +59,5 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .env*
+# Public production API origin (not a secret); required for Vite prod bake-in
+!apps/frontend-web/.env.production

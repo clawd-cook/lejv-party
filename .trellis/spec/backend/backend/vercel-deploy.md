@@ -10,7 +10,7 @@ Executable contract for deploying `apps/backend` to Vercel under team `clawd-coo
 
 - Trigger: linking, configuring, or changing how `apps/backend` builds/runs on Vercel (preview or later production).
 - Touches: `apps/backend/vercel.json`, `apps/backend/scripts/vercel-build.sh`, `apps/backend/src/main.ts`, root `.vercelignore` / `.gitignore` (`.vercel`).
-- Out of scope here: Redis/KV durable rooms, production custom domain, uploading `AI_*` secrets unless a later task owns that.
+- Out of scope here: Redis/KV durable rooms, DNS/domain provisioning, uploading `AI_*` secrets unless a later task owns that. Production custom domain (once attached) is documented under Signatures for client discoverability.
 
 ### 2. Signatures
 
@@ -23,6 +23,7 @@ Executable contract for deploying `apps/backend` to Vercel under team `clawd-coo
 | Entry | `src/main.ts` — `void bootstrap()` (not top-level `await`) |
 | Listen | `app.listen(process.env.PORT ?? 3000)` with global prefix `api` |
 | Smoke | `GET /api` → `200` body `Hello World!` |
+| Production origin | Custom domain `https://www.lejv-party-backend.casa` — smoke `GET https://www.lejv-party-backend.casa/api` → `200` + Hello World (frontends bake this origin; see [room-party-api-contract.md](../../guides/room-party-api-contract.md)) |
 | CLI deploy cwd | **Monorepo root** (not `apps/backend`) |
 
 ### 3. Contracts
@@ -100,4 +101,4 @@ vercel deploy -y --force --archive=tgz --scope clawd-cook
 
 1. Linking with Root Directory at repo root — Nest detection and `vercel.json` paths diverge from this contract.
 2. Assuming `packages/` on disk is enough at runtime — must materialize into `apps/backend/node_modules/@lejv-party/*`.
-3. Committing `.vercel/` or `.env*` — keep local; `.vercel` is gitignored at root and under `apps/backend`.
+3. Committing `.vercel/` or secret `.env*` — keep local. Exception: committed `apps/frontend-web/.env.production` holds the public production API origin only (see frontend Env table in the room API contract).

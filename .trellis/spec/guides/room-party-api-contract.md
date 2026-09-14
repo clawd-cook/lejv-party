@@ -62,10 +62,16 @@ PORT=3000
 
 ### Env (frontends)
 
+Production API origin (origin only — no `/api` suffix; client paths already include `/api/...`):
+
+```
+https://www.lejv-party-backend.casa
+```
+
 | App | Config |
 |-----|--------|
-| frontend-web | Vite proxy `/api` → `http://localhost:3000`; optional `VITE_API_BASE_URL` |
-| frontend-app | `configureApiClient({ baseUrl })`; read `apiBaseUrl` from `lynx.__globalProps` on device (use LAN IP, not `localhost`) |
+| frontend-web | Dev: Vite proxy `/api` → `http://localhost:3000` when `VITE_API_BASE_URL` is unset. Prod: bake `VITE_API_BASE_URL` via `apps/frontend-web/.env.production` **and** GitHub `vars.VITE_API_BASE_URL` (Pages CI) to the production origin above. |
+| frontend-app | `configureApiClient({ baseUrl })`; default `DEFAULT_BASE_URL` is the production origin; override with `apiBaseUrl` / `api_base_url` from `lynx.__globalProps` (or nested query/scheme) for LAN/local Nest (use LAN IP, not `localhost` on device). |
 
 ### Lynx navigation
 

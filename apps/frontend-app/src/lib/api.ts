@@ -1,7 +1,7 @@
 import { configureApiClient } from '@lejv-party/api-client'
 
-/** NestJS default for local/dev. On device, point at the host machine IP. */
-const DEFAULT_BASE_URL = 'http://localhost:3000'
+/** Production Nest origin. Override with `apiBaseUrl` / `api_base_url` on `__globalProps` for LAN/local. */
+const DEFAULT_BASE_URL = 'https://www.lejv-party-backend.casa'
 
 let configured = false
 
