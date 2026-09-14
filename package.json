@@ -19,5 +19,8 @@
   "workspaces": [
     "packages/*",
     "apps/*"
-  ]
+  ],
+  "dependencies": {
+    "bumpp": "^12.3.0"
+  }
 }
