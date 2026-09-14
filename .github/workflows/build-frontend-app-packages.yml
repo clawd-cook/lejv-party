@@ -1,0 +1,203 @@
+name: Build frontend-app packages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/frontend-app/**'
+      - 'packages/domain/**'
+      - 'packages/validation/**'
+      - 'packages/client-core/**'
+      - 'packages/api-client/**'
+      - 'package-lock.json'
+      - 'package.json'
+      - '.github/workflows/build-frontend-app-packages.yml'
+  pull_request:
+    paths:
+      - 'apps/frontend-app/**'
+      - 'packages/domain/**'
+      - 'packages/validation/**'
+      - 'packages/client-core/**'
+      - 'packages/api-client/**'
+      - 'package-lock.json'
+      - 'package.json'
+      - '.github/workflows/build-frontend-app-packages.yml'
+  workflow_dispatch:
+    inputs:
+      deliverable_mode:
+        description: 'Deliverable mode'
+        type: choice
+        options:
+          - android
+          - qr
+          - both
+        default: both
+
+permissions:
+  contents: write
+
+concurrency:
+  group: frontend-app-packages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # PR default: android only (QR needs a public PREVIEW_BASE_URL or Release publish).
+      # Push / unspecified: both. Dispatch: explicit input.
+      DELIVERABLE_MODE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deliverable_mode || github.event_name == 'pull_request' && 'android' || 'both' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve mode flags
+        id: mode
+        run: |
+          MODE="${DELIVERABLE_MODE:-both}"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          case "$MODE" in
+            android)
+              echo "android=true" >> "$GITHUB_OUTPUT"
+              echo "qr=false" >> "$GITHUB_OUTPUT"
+              ;;
+            qr)
+              echo "android=false" >> "$GITHUB_OUTPUT"
+              echo "qr=true" >> "$GITHUB_OUTPUT"
+              ;;
+            both)
+              echo "android=true" >> "$GITHUB_OUTPUT"
+              echo "qr=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Unknown deliverable_mode: $MODE"
+              exit 1
+              ;;
+          esac
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.20.0'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared packages
+        run: npm run build:packages
+
+      - name: Unit tests frontend-app
+        run: npm run test -w frontend-app
+
+      - name: Build Lynx bundles
+        run: npm run build -w frontend-app
+
+      - name: Upload Lynx bundles
+        uses: actions/upload-artifact@v4
+        with:
+          name: lynx-bundles-debug
+          path: apps/frontend-app/dist
+          if-no-files-found: error
+
+      - name: Setup JDK 11
+        if: steps.mode.outputs.android == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Setup Android SDK
+        if: steps.mode.outputs.android == 'true'
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android licenses
+        if: steps.mode.outputs.android == 'true'
+        run: yes | sdkmanager --licenses >/dev/null || true
+
+      - name: Install Android platform & build-tools
+        if: steps.mode.outputs.android == 'true'
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Assemble Android debug APK
+        if: steps.mode.outputs.android == 'true'
+        working-directory: apps/frontend-app/android
+        env:
+          SPARKLING_USE_NATIVE_ASSETS: 'true'
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload Android debug APK
+        if: steps.mode.outputs.android == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-app-android-debug
+          path: apps/frontend-app/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Resolve preview base URL
+        id: preview
+        if: steps.mode.outputs.qr == 'true'
+        run: |
+          if [ -n "${{ vars.PREVIEW_BASE_URL }}" ]; then
+            BASE="${{ vars.PREVIEW_BASE_URL }}"
+            echo "publish_release=false" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" != "pull_request" ]; then
+            BASE="https://github.com/${{ github.repository }}/releases/download/frontend-app-preview"
+            echo "publish_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::QR mode on pull_request requires repository variable PREVIEW_BASE_URL (PR builds do not publish the preview Release)."
+            exit 1
+          fi
+          BASE="${BASE%/}"
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "Preview base URL: $BASE"
+
+      - name: Publish Lynx bundles to preview Release
+        if: steps.mode.outputs.qr == 'true' && steps.preview.outputs.publish_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: frontend-app-preview
+          name: frontend-app preview bundles
+          prerelease: true
+          target_commitish: ${{ github.sha }}
+          body: |
+            Floating preview tag for LynxExplorer QR scans.
+            Scan QR artifacts from the matching workflow run.
+            Pass `apiBaseUrl` via scheme/global props for a reachable backend (default is localhost).
+          files: apps/frontend-app/dist/*.lynx.bundle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate preview QR codes
+        if: steps.mode.outputs.qr == 'true'
+        working-directory: apps/frontend-app
+        env:
+          PREVIEW_BASE_URL: ${{ steps.preview.outputs.base }}
+        run: npm run preview:qr
+
+      - name: Upload QR preview assets
+        if: steps.mode.outputs.qr == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-app-qr-preview
+          path: apps/frontend-app/preview-qr
+          if-no-files-found: error
+
+      - name: Summarize deliverables
+        run: |
+          {
+            echo "## frontend-app packages"
+            echo ""
+            echo "- Mode: \`${{ steps.mode.outputs.mode }}\`"
+            echo "- Lynx bundles: artifact \`lynx-bundles-debug\`"
+            if [ "${{ steps.mode.outputs.android }}" = "true" ]; then
+              echo "- Android: artifact \`frontend-app-android-debug\` (debug APK, not for store)"
+            fi
+            if [ "${{ steps.mode.outputs.qr }}" = "true" ]; then
+              echo "- QR: artifact \`frontend-app-qr-preview\` (PNG + manifest.json)"
+              echo "- Preview base: \`${{ steps.preview.outputs.base }}\`"
+            fi
+            echo ""
+            echo "API reminder: device clients default to \`http://localhost:3000\`. Pass \`apiBaseUrl\` via scheme/global props."
+          } >> "$GITHUB_STEP_SUMMARY"

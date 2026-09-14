@@ -39,6 +39,7 @@
     "autolink": "sparkling-app-cli autolink",
     "test": "vitest run --passWithNoTests",
     "run:android": "sparkling-app-cli run:android",
-    "run:ios": "sparkling-app-cli run:ios --copy"
+    "run:ios": "sparkling-app-cli run:ios --copy",
+    "preview:qr": "node ./scripts/generate-preview-qr.mjs"
   }
 }
