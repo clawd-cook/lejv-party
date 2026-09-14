@@ -17,7 +17,7 @@
 
 ## Overview
 
-产品形态来自 MVP（Next.js 单体），已拆进本仓库的 **npm workspaces monorepo**：
+本仓库是 **npm workspaces monorepo**，按端拆分应用与共享包：
 
 | Layer | Path | Stack |
 | --- | --- | --- |
@@ -26,7 +26,7 @@
 | App | `apps/frontend-app` | ReactLynx · Sparkling · rspeedy |
 | Shared | `packages/*` | Domain types, Zod schemas, client reducer, REST/SSE client, song bank |
 
-**Gameplay (MVP):**
+**Gameplay:**
 
 1. Create or join a 6-character room with a nickname (1–16 chars).
 2. Host configures CEFR level, eras, genres, victory score; starts the game.
@@ -35,7 +35,7 @@
 5. Phases: `lobby` → `question` → `reveal` → `ended`. Host promotion when the host leaves.
 
 > [!IMPORTANT]
-> Rooms live in **process memory**. Restarting the backend drops all rooms. There is no Redis / DB in this MVP. Prefer a long-lived Node process for local demos.
+> Rooms live in **process memory**. Restarting the backend drops all rooms. There is no Redis / DB yet. Prefer a long-lived Node process for local demos.
 
 ---
 
@@ -221,4 +221,3 @@ lejv-party/
 
 - Agent-oriented conventions and skill routing live in [AGENTS.md](AGENTS.md).
 - Trellis specs under `.trellis/spec/` — load the matching package index before large edits.
-- Reference MVP (if present locally): `lejv-party-mvp/` — not part of the runtime workspace.
