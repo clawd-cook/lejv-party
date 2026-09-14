@@ -22,9 +22,9 @@ Questions to answer:
 
 ## Forbidden Patterns
 
-<!-- Patterns that should never be used and why -->
+- **Top-level `await bootstrap()` in `apps/backend/src/main.ts`** — Vercel’s Nest listen patch never binds; use `void bootstrap()`. Full deploy contract: [vercel-deploy.md](./vercel-deploy.md).
 
-(To be filled by the team)
+<!-- Additional patterns to fill by the team -->
 
 ---
 

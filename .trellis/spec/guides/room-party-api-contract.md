@@ -43,6 +43,7 @@ Validation schemas: `@lejv-party/validation` (`room.schema.ts`).
 - Initial frame: `data: {"type":"room.snapshot","state":{...}}\n\n`
 - Events: `RoomEvent` union from `@lejv-party/domain`
 - Heartbeat: `:ka\n\n` every ~15s
+- **Deploy note**: on Vercel preview, rooms are in-process memory — SSE subscriptions and room state do **not** survive cold starts or multi-instance scale-out. See [vercel-deploy.md](../backend/backend/vercel-deploy.md). Do not treat cross-instance multi-tab sync as acceptance on preview.
 
 ### Client state mirror
 

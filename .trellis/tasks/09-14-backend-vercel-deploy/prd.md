@@ -10,7 +10,7 @@ Ship a Vercel **preview** deployment of `apps/backend` under team `clawd-cook`, 
 - Entry `apps/backend/src/main.ts` already uses `app.listen(process.env.PORT ?? 3000)` and matches [Vercel NestJS entrypoint detection](https://vercel.com/docs/frameworks/backend/nestjs).
 - Global prefix `api`; CORS on. Health-style route: `GET /api` → `Hello World!`.
 - Rooms are in-memory; realtime is SSE. `AI_*` is read only in `translator.service` (not required to boot).
-- Git remote `git@github.com:clawd-cook/lejv-party.git`. CLI user `heyq02`, team `clawd-cook`. Not linked yet. No `vercel.json` yet.
+- Git remote `git@github.com:clawd-cook/lejv-party.git`. CLI user `heyq02`, team `clawd-cook`. Linked as `clawd-cook/lejv-party-backend` (Root Directory `apps/backend`). `apps/backend/vercel.json` present.
 
 ## Requirements
 
@@ -35,12 +35,12 @@ Ship a Vercel **preview** deployment of `apps/backend` under team `clawd-cook`, 
 
 ## Acceptance Criteria
 
-- [ ] Vercel project linked under `clawd-cook` for backend (`.vercel/` present; gitignored if local-only).
-- [ ] Preview deploy succeeds with a public URL.
-- [ ] `GET {preview}/api` returns a successful Hello World-style response.
-- [ ] Workspace packages resolve in the Vercel build (no missing `@lejv-party/*` module errors).
-- [ ] `AI_*` left unset on Vercel; gap noted.
-- [ ] Serverless limits called out in design/task notes.
+- [x] Vercel project linked under `clawd-cook` for backend (`.vercel/` present; gitignored if local-only).
+- [x] Preview deploy succeeds with a public URL.
+- [x] `GET {preview}/api` returns a successful Hello World-style response.
+- [x] Workspace packages resolve in the Vercel build (no missing `@lejv-party/*` module errors).
+- [x] `AI_*` left unset on Vercel; gap noted.
+- [x] Serverless limits called out in design/task notes.
 
 ## Open questions
 
