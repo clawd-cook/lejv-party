@@ -89,7 +89,6 @@ export function QuestionPanel(props: Props) {
         <view className="field">
           <input
             className="input"
-            value={answer}
             placeholder={selfAnswered ? '你已作答' : '输入歌名'}
             maxlength={64}
             disabled={selfAnswered || submitting}

@@ -4,11 +4,11 @@
 **/dist
 **/.env
 **/.env.*
+!apps/frontend-web/.env.production
 **/.DS_Store
 **/coverage
 **/.turbo
 **/*.tsbuildinfo
 .trellis
 lejv-party-mvp
-apps/frontend-web
 apps/frontend-app

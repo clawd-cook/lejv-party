@@ -115,7 +115,6 @@ export function App(props: { onMounted?: () => void }) {
             <text className="label">昵称</text>
             <input
               className="input"
-              value={createNickname}
               placeholder="1-16 字符"
               maxlength={16}
               bindinput={(e) => setCreateNickname(e.detail.value)}
@@ -138,7 +137,6 @@ export function App(props: { onMounted?: () => void }) {
             <text className="label">昵称</text>
             <input
               className="input"
-              value={joinNickname}
               placeholder="1-16 字符"
               maxlength={16}
               bindinput={(e) => setJoinNickname(e.detail.value)}
@@ -148,7 +146,6 @@ export function App(props: { onMounted?: () => void }) {
             <text className="label">房间号</text>
             <input
               className="input"
-              value={joinRoomId}
               placeholder="6 位字母/数字"
               maxlength={6}
               bindinput={(e) => setJoinRoomId(e.detail.value)}
