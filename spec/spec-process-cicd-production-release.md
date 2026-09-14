@@ -334,7 +334,7 @@ Required before first real promote:
 
 | Kind | Name | Example / notes |
 |------|------|-----------------|
-| Secret | `VERCEL_TOKEN` | Vercel access token |
+| Secret | `VERCEL_TOKEN` | Vercel access token — **also required on Environment `production`** (Environment secrets override repo secrets of the same name; an empty Environment secret shadows the repo token and breaks `vercel promote`) |
 | Variable or Secret | `VERCEL_ORG_ID` | Team id for `clawd-cook` (see local `.vercel/project.json` `orgId`) |
 | Variable or Secret | `VERCEL_PROJECT_ID_BACKEND` | `lejv-party-backend` (`apps/backend/.vercel/project.json` → `projectId`) |
 | Variable or Secret | `VERCEL_PROJECT_ID_WEB` | `lejv-party-frontend-web` (`apps/frontend-web/.vercel/project.json` → `projectId`) |

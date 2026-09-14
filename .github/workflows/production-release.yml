@@ -308,9 +308,12 @@ jobs:
     if: needs.resolve.outputs.dry_run != 'true' && needs.resolve.outputs.skip_promote != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Environment secrets override repo secrets of the same name — set VERCEL_TOKEN
+    # on Environment `production` (or remove an empty Environment secret that shadows the repo one).
     environment: production
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_TELEMETRY_DISABLED: '1'
       VAR_ORG: ${{ vars.VERCEL_ORG_ID }}
       SEC_ORG: ${{ secrets.VERCEL_ORG_ID }}
       VAR_BACKEND_PROJECT: ${{ vars.VERCEL_PROJECT_ID_BACKEND }}
@@ -326,15 +329,36 @@ jobs:
         with:
           node-version: '24.20.0'
 
+      - name: Verify Vercel token for Environment production
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "::error::secrets.VERCEL_TOKEN is empty in the promote job (environment: production)."
+            echo "::error::Repo secrets are overridden by Environment secrets of the same name."
+            echo "::error::Fix: Settings → Environments → production → add VERCEL_TOKEN, or delete an empty Environment secret that shadows the repo secret."
+            exit 1
+          fi
+          echo "VERCEL_TOKEN is present (length=${#VERCEL_TOKEN})."
+
       - name: Install Vercel CLI
         run: npm install -g "vercel@${VERCEL_CLI_VERSION}"
 
-      - name: Export Vercel project scope
+      - name: Export Vercel project scope + CLI auth file
         run: |
           set -euo pipefail
           echo "VERCEL_ORG_ID=${VAR_ORG:-$SEC_ORG}" >> "$GITHUB_ENV"
           echo "VERCEL_PROJECT_ID_BACKEND=${VAR_BACKEND_PROJECT:-$SEC_BACKEND_PROJECT}" >> "$GITHUB_ENV"
           echo "VERCEL_PROJECT_ID_WEB=${VAR_WEB_PROJECT:-$SEC_WEB_PROJECT}" >> "$GITHUB_ENV"
+          # Ensure CLI finds credentials even if env auto-detect fails on this runner.
+          AUTH_DIR="${HOME}/.local/share/com.vercel.cli"
+          mkdir -p "$AUTH_DIR"
+          AUTH_DIR="$AUTH_DIR" node -e '
+            const fs = require("fs");
+            const dir = process.env.AUTH_DIR;
+            const token = process.env.VERCEL_TOKEN;
+            if (!token) throw new Error("VERCEL_TOKEN missing while writing auth.json");
+            fs.writeFileSync(`${dir}/auth.json`, JSON.stringify({ token }, null, 2), { mode: 0o600 });
+          '
 
       - name: Promote backend preview → Production
         if: needs.resolve.outputs.promote_mode == 'promote-preview'
