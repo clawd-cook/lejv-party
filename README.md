@@ -4,12 +4,14 @@
 
 # lejv-party
 
+**English** | [简体中文](README.zh-CN.md)
+
 ![Node.js](https://img.shields.io/badge/Node.js-24.20.0-3c873a?style=flat-square)
 ![npm](https://img.shields.io/badge/packageManager-npm%4011.19.0-cb3837?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?style=flat-square&logo=typescript&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
-多人在线「歌词猜猜猜」派对游戏：房主创建房间、玩家抢答英译歌词对应的中文歌名。服务端权威状态机 + SSE 实时同步；H5（Vue）与跨端 App（ReactLynx / Sparkling）共用一套领域类型与 API 客户端。
+Multiplayer song-lyric guessing party game: the host creates a room, players buzz in to match English lyric translations with Chinese song titles. Server-authoritative state machine with SSE sync; H5 (Vue) and cross-platform App (ReactLynx / Sparkling) share domain types and an API client.
 
 [Overview](#overview) · [Features](#features) · [Architecture](#architecture) · [Getting started](#getting-started) · [Run locally](#run-locally) · [API](#api) · [Workspace](#workspace)
 
@@ -17,7 +19,7 @@
 
 ## Overview
 
-本仓库是 **npm workspaces monorepo**，按端拆分应用与共享包：
+This repo is an **npm workspaces monorepo** split by app and shared packages:
 
 | Layer | Path | Stack |
 | --- | --- | --- |
@@ -105,8 +107,6 @@ npm run build:packages
 cp apps/backend/.env.example apps/backend/.env
 ```
 
-Fill in:
-
 | Variable | Description |
 | --- | --- |
 | `AI_BASE_URL` | OpenAI-compatible base URL |
@@ -141,7 +141,6 @@ Vite proxies `/api` → `http://localhost:3000`. Open the printed local URL (usu
 ```bash
 nvm use 24.20.0
 npm run build -w frontend-app
-# then run on device / simulator:
 npm run run:ios -w frontend-app
 # or
 npm run run:android -w frontend-app
