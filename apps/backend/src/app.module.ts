@@ -1,22 +1,29 @@
-import { Module } from '@nestjs/common';
+import { Module, type DynamicModule, type Type } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { RoomModule } from './room/room.module.js';
 
-export const { ObserveModule, ObserveInstrument } = createObserveModule();
+const observeAppKey = process.env.NEST_OBSERVE_APP_KEY;
+const observeAppSecret = process.env.NEST_OBSERVE_APP_SECRET;
+const observeEnabled = Boolean(observeAppKey && observeAppSecret);
+
+const observe = observeEnabled ? createObserveModule() : undefined;
+
+export const ObserveInstrument = observe?.ObserveInstrument;
+
+const observeImports: Array<DynamicModule | Type<unknown>> = observe
+  ? [
+      observe.ObserveModule.forRoot({
+        appKey: observeAppKey!,
+        appSecret: observeAppSecret!,
+        serviceId: 'backend',
+      }),
+    ]
+  : [];
 
 @Module({
-  imports: [
-    // Distributed tracing, auto-correlated logs, request/job metrics, error
-    // telemetry, alarms, and more — out of the box. Sign up at https://observe.nestjs.com
-    ObserveModule.forRoot({
-      appKey: 'YOUR_APP_KEY',
-      appSecret: 'YOUR_APP_SECRET',
-      serviceId: 'backend',
-    }),
-    RoomModule,
-  ],
+  imports: [...observeImports, RoomModule],
   controllers: [AppController],
   providers: [AppService],
 })

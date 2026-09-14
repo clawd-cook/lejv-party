@@ -1,0 +1,14 @@
+# Keep CLI archive deploys small and let Vercel install deps on the builder.
+**/node_modules
+**/.git
+**/dist
+**/.env
+**/.env.*
+**/.DS_Store
+**/coverage
+**/.turbo
+**/*.tsbuildinfo
+.trellis
+lejv-party-mvp
+apps/frontend-web
+apps/frontend-app
