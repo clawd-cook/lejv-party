@@ -9,6 +9,8 @@ const lynxConfig = defineConfig({
     entry: {
       main: './src/pages/main/index.tsx',
       second: './src/pages/second/index.tsx',
+      home: './src/pages/home/index.tsx',
+      room: './src/pages/room/index.tsx',
     },
   },
   output: {
@@ -50,6 +52,12 @@ const config: AppConfig = {
     },
     second: {
       path: './lynxPages/second',
+    },
+    home: {
+      path: './lynxPages/home',
+    },
+    room: {
+      path: './lynxPages/room',
     },
   },
   plugin: [

@@ -12,7 +12,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:packages": "npm run build -w @lejv-party/domain && npm run build -w @lejv-party/validation && npm run build -w @lejv-party/client-core && npm run build -w @lejv-party/api-client",
+    "test:packages": "npm run test -w @lejv-party/domain && npm run test -w @lejv-party/client-core"
   },
   "packageManager": "npm@11.19.0",
   "workspaces": [

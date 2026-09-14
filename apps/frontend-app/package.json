@@ -10,6 +10,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@lejv-party/api-client": "*",
+    "@lejv-party/client-core": "*",
+    "@lejv-party/domain": "*",
     "@lynx-js/react": "^0.116.2",
     "sparkling-navigation": "^2.0.1"
   },

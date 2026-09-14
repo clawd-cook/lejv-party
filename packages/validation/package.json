@@ -1,0 +1,23 @@
+{
+  "name": "@lejv-party/validation",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "type-check": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@lejv-party/domain": "*",
+    "zod": "^4.6.2"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.0"
+  }
+}

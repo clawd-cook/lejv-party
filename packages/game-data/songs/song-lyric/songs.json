@@ -1,0 +1,452 @@
+[
+  {
+    "id": "cui-jian-yi-wu-suo-you",
+    "title": "一无所有",
+    "artist": "崔健",
+    "year": 1986,
+    "era": "80s",
+    "genre": "摇滚",
+    "difficulty": "easy",
+    "lyricLines": [
+      "我曾经问个不休 你何时跟我走",
+      "我要给你我的追求 还有我的自由",
+      "脚下的地在走 身边的水在流",
+      "可你却总是笑我"
+    ]
+  },
+  {
+    "id": "luo-da-you-tong-nian",
+    "title": "童年",
+    "artist": "罗大佑",
+    "year": 1982,
+    "era": "80s",
+    "genre": "民谣",
+    "difficulty": "easy",
+    "lyricLines": [
+      "池塘边的榕树上 知了在声声叫着夏天",
+      "操场边的秋千上 只有蝴蝶停在上面",
+      "总是要等到睡觉前 才知道功课只做了一点点",
+      "总是要等到考试后 才知道该念的书都没有念"
+    ]
+  },
+  {
+    "id": "zhang-mingmin-wo-de-zhong-guo-xin",
+    "title": "我的中国心",
+    "artist": "张明敏",
+    "year": 1984,
+    "era": "80s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "河山只在我梦萦 祖国已多年未亲近",
+      "可是不管怎样也改变不了 我的一颗赤诚之心",
+      "长江长城 黄山黄河 在我胸中重千斤",
+      "无论何时无论何地 心中一样亲"
+    ]
+  },
+  {
+    "id": "ye-liyi-shang-hai-tan",
+    "title": "上海滩",
+    "artist": "叶丽仪",
+    "year": 1980,
+    "era": "80s",
+    "genre": "影视 OST",
+    "difficulty": "medium",
+    "lyricLines": [
+      "浪奔 浪流 万里滔滔江水永不休",
+      "淘尽了 世间事 混作滔滔一片潮流",
+      "是喜 是愁 浪里分不清欢笑悲忧",
+      "爱你恨你 问君知否 似大江一发不收"
+    ]
+  },
+  {
+    "id": "zhou-huajian-peng-you",
+    "title": "朋友",
+    "artist": "周华健",
+    "year": 1997,
+    "era": "90s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "这些年 一个人 风也过 雨也走",
+      "有过泪 有过错 还记得坚持什么",
+      "真爱过 才会懂 会寂寞 会回首",
+      "终有梦 终有你 在心中"
+    ]
+  },
+  {
+    "id": "beyond-hai-kuo-tian-kong",
+    "title": "海阔天空",
+    "artist": "Beyond",
+    "year": 1993,
+    "era": "90s",
+    "genre": "摇滚",
+    "difficulty": "easy",
+    "lyricLines": [
+      "今天我 寒夜里看雪飘过",
+      "怀着冷却了的心窝漂远方",
+      "多少次 迎着冷眼与嘲笑",
+      "从没有放弃过心中的理想"
+    ]
+  },
+  {
+    "id": "lao-lang-tong-zhuo-de-ni",
+    "title": "同桌的你",
+    "artist": "老狼",
+    "year": 1994,
+    "era": "90s",
+    "genre": "民谣",
+    "difficulty": "easy",
+    "lyricLines": [
+      "明天你是否会想起 昨天你写的日记",
+      "明天你是否还惦记 曾经最爱哭的你",
+      "老师们都已想不起 猜不出问题的你",
+      "谁娶了多愁善感的你 谁看了你的日记"
+    ]
+  },
+  {
+    "id": "xin-xiaoqi-wei-dao",
+    "title": "味道",
+    "artist": "辛晓琪",
+    "year": 1994,
+    "era": "90s",
+    "genre": "流行",
+    "difficulty": "medium",
+    "lyricLines": [
+      "想念你的笑 想念你的外套",
+      "想念你白色袜子",
+      "想念你的吻 和手指淡淡烟草",
+      "我明白太爱 会让人失去骄傲"
+    ]
+  },
+  {
+    "id": "wu-bai-nuo-wei-de-sen-lin",
+    "title": "挪威的森林",
+    "artist": "伍佰",
+    "year": 1996,
+    "era": "90s",
+    "genre": "摇滚",
+    "difficulty": "hard",
+    "lyricLines": [
+      "让我将你心儿摘下 试着将它慢慢溶化",
+      "看我在你心中是否 仍完美无瑕",
+      "是否我一个人走过 那寂静的时空",
+      "然后知道我是那么爱你"
+    ]
+  },
+  {
+    "id": "jay-zhou-qing-tian",
+    "title": "晴天",
+    "artist": "周杰伦",
+    "year": 2003,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "故事的小黄花 从出生那年就飘着",
+      "童年的荡秋千 随记忆一直晃到现在",
+      "刮风这天 我试过握着你手",
+      "但偏偏 雨渐渐 大到我看你不见"
+    ]
+  },
+  {
+    "id": "jay-zhou-dao-xiang",
+    "title": "稻香",
+    "artist": "周杰伦",
+    "year": 2008,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "对这个世界如果你有太多的抱怨",
+      "跌倒了就不敢继续往前走",
+      "为什么人要这么的脆弱 堕落",
+      "请你打开电视看看 多少人为生命在努力勇敢的走下去"
+    ]
+  },
+  {
+    "id": "lin-junjie-jiang-nan",
+    "title": "江南",
+    "artist": "林俊杰",
+    "year": 2004,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "风到这里就是黏 黏住过客的思念",
+      "雨到了这里缠成线 缠着我们留恋人世间",
+      "你在身边就是缘 缘份写在三生石上面",
+      "爱有万分之一甜 宁愿我就葬在这一点"
+    ]
+  },
+  {
+    "id": "guang-liang-tong-hua",
+    "title": "童话",
+    "artist": "光良",
+    "year": 2005,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "忘了有多久 再没听到你",
+      "对我说你最爱的故事",
+      "我想了很久 我开始慌了",
+      "是不是我又做错了什么"
+    ]
+  },
+  {
+    "id": "eason-chan-ai-qing-zhuan-yi",
+    "title": "爱情转移",
+    "artist": "陈奕迅",
+    "year": 2007,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "medium",
+    "lyricLines": [
+      "徘徊过多少橱窗 住过多少旅馆",
+      "才敢在你面前展现 笑颜",
+      "把一个人的温暖 转移到另一个的胸膛",
+      "让上次犯的错反省出梦想"
+    ]
+  },
+  {
+    "id": "lu-qiaoyin-hao-xin-fen-shou",
+    "title": "好心分手",
+    "artist": "卢巧音",
+    "year": 2002,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "medium",
+    "lyricLines": [
+      "是否很惊讶 讲不出说话",
+      "没错我是说 你想分手吗",
+      "曾给你 无数 承诺过 至今 仍然 未兑现",
+      "决心分手总要狠狠讲一次啊"
+    ]
+  },
+  {
+    "id": "jay-zhou-shuang-jie-gun",
+    "title": "双截棍",
+    "artist": "周杰伦",
+    "year": 2001,
+    "era": "00s",
+    "genre": "说唱",
+    "difficulty": "easy",
+    "lyricLines": [
+      "岩烧店的烟味弥漫 隔壁是国术馆",
+      "店里面的妈妈桑 茶道有三段",
+      "教拳脚武术的老板 练铁沙掌耍杨家枪",
+      "硬底子功夫最擅长 还会金钟罩铁步衫"
+    ]
+  },
+  {
+    "id": "jay-zhou-qian-li-zhi-wai",
+    "title": "千里之外",
+    "artist": "周杰伦",
+    "year": 2006,
+    "era": "00s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "屋檐如悬崖 风铃如沧海",
+      "我等燕归来 时间被安排",
+      "梦醒来 是谁在窗台",
+      "把结局打开 那薄如蝉翼的未来"
+    ]
+  },
+  {
+    "id": "pu-shu-na-xie-hua-er",
+    "title": "那些花儿",
+    "artist": "朴树",
+    "year": 2000,
+    "era": "00s",
+    "genre": "民谣",
+    "difficulty": "hard",
+    "lyricLines": [
+      "那时候天总是很蓝 日子总过得太慢",
+      "你总说毕业遥遥无期 转眼就各奔东西",
+      "他们都老了吧 他们在哪里呀",
+      "幸运的是我曾陪他们开放"
+    ]
+  },
+  {
+    "id": "jay-zhou-long-quan",
+    "title": "龙拳",
+    "artist": "周杰伦",
+    "year": 2002,
+    "era": "00s",
+    "genre": "说唱",
+    "difficulty": "medium",
+    "lyricLines": [
+      "以敦煌为圆心的东北东 这民族的海岸线像一支弓",
+      "我用手臂拉开这整个土地的重",
+      "蒙古高原南下的风写些什么内容",
+      "让家乡的爱恨情仇随风"
+    ]
+  },
+  {
+    "id": "pu-shu-ping-fan-zhi-lu",
+    "title": "平凡之路",
+    "artist": "朴树",
+    "year": 2014,
+    "era": "10s",
+    "genre": "民谣",
+    "difficulty": "easy",
+    "lyricLines": [
+      "我曾经跨过山和大海 也穿过人山人海",
+      "我曾经拥有着的一切 转眼都飘散如烟",
+      "我曾经失落失望失掉所有方向",
+      "直到看见平凡才是唯一的答案"
+    ]
+  },
+  {
+    "id": "xue-zhiqian-yan-yuan",
+    "title": "演员",
+    "artist": "薛之谦",
+    "year": 2015,
+    "era": "10s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "简单点 说话的方式简单点",
+      "递进的情绪不要那么容易被猜到",
+      "该配合你演出的我演视而不见",
+      "在逼一个最爱你的人即兴表演"
+    ]
+  },
+  {
+    "id": "zhao-lei-cheng-du",
+    "title": "成都",
+    "artist": "赵雷",
+    "year": 2016,
+    "era": "10s",
+    "genre": "民谣",
+    "difficulty": "easy",
+    "lyricLines": [
+      "让我掉下眼泪的 不止昨夜的酒",
+      "让我依依不舍的 不止你的温柔",
+      "余路还要走多久 你攥着我的手",
+      "让我感到为难的 是挣扎的自由"
+    ]
+  },
+  {
+    "id": "deng-ziqi-guang-nian-zhi-wai",
+    "title": "光年之外",
+    "artist": "邓紫棋",
+    "year": 2016,
+    "era": "10s",
+    "genre": "影视 OST",
+    "difficulty": "easy",
+    "lyricLines": [
+      "感受停在我发端的指尖",
+      "如何瞬间冻结时间",
+      "缘份让我们相遇乱世以外",
+      "命运却要我们危难中相爱"
+    ]
+  },
+  {
+    "id": "mao-buyi-xiao-chou",
+    "title": "消愁",
+    "artist": "毛不易",
+    "year": 2017,
+    "era": "10s",
+    "genre": "民谣",
+    "difficulty": "medium",
+    "lyricLines": [
+      "当你走进这欢乐场 背上所有的梦与想",
+      "各色的脸上各色的妆 没人记得你的模样",
+      "三巡酒过你在角落 固执得像个人偶",
+      "会想起当年 那扇窗还有唱歌的喉"
+    ]
+  },
+  {
+    "id": "da-zhuang-wo-men-bu-yi-yang",
+    "title": "我们不一样",
+    "artist": "大壮",
+    "year": 2017,
+    "era": "10s",
+    "genre": "流行",
+    "difficulty": "medium",
+    "lyricLines": [
+      "这么多年的兄弟 有谁比我更了解你",
+      "太多太多不容易 磨平了岁月和脾气",
+      "时间转眼过去 这身后不散的筵席",
+      "只因为我们还在 心留在原地"
+    ]
+  },
+  {
+    "id": "zhou-shen-da-yu",
+    "title": "大鱼",
+    "artist": "周深",
+    "year": 2016,
+    "era": "10s",
+    "genre": "影视 OST",
+    "difficulty": "easy",
+    "lyricLines": [
+      "海浪无声将夜幕深深淹没",
+      "漫过天空尽头的角落",
+      "凝望你沉睡的轮廓",
+      "看命运光影如何交错"
+    ]
+  },
+  {
+    "id": "mai-lajiao-qi-feng-le",
+    "title": "起风了",
+    "artist": "买辣椒也用券",
+    "year": 2017,
+    "era": "10s",
+    "genre": "流行",
+    "difficulty": "easy",
+    "lyricLines": [
+      "我曾难自拔于世界之大",
+      "也沉溺于其中梦话",
+      "不得真假 不做挣扎 不惧笑话",
+      "我曾将青春翻涌成她 也曾指尖弹出盛夏"
+    ]
+  },
+  {
+    "id": "eason-chan-gu-yong-zhe",
+    "title": "孤勇者",
+    "artist": "陈奕迅",
+    "year": 2021,
+    "era": "20s",
+    "genre": "影视 OST",
+    "difficulty": "easy",
+    "lyricLines": [
+      "都是勇敢的 你额头的伤口",
+      "你的不同 你犯的错",
+      "都不必隐藏 你破旧的玩偶",
+      "谁说站在光里的才算英雄"
+    ]
+  },
+  {
+    "id": "liu-shuang-mo-he-wu-ting",
+    "title": "漠河舞厅",
+    "artist": "柳爽",
+    "year": 2020,
+    "era": "20s",
+    "genre": "民谣",
+    "difficulty": "medium",
+    "lyricLines": [
+      "晚星就像你的眼睛 杀人又放火",
+      "你在遥远的地方 一直亮着",
+      "如果所有土地连在一起 走上一光年",
+      "宴会没有终点 只有开始的部分"
+    ]
+  },
+  {
+    "id": "dao-lang-luo-cha-hai-shi",
+    "title": "罗刹海市",
+    "artist": "刀郎",
+    "year": 2023,
+    "era": "20s",
+    "genre": "民谣",
+    "difficulty": "hard",
+    "lyricLines": [
+      "过七冲越焦海三寸的黄泥地",
+      "只为那有一条一丘河",
+      "河水流过苟苟营",
+      "打西边来了一个小伙儿他叫马骥"
+    ]
+  }
+]

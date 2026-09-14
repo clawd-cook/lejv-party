@@ -3,11 +3,13 @@ import * as router from 'sparkling-navigation'
 
 import './App.css'
 import sparklingLogo from '../../assets/sparkling_icon.png'
+import { buildHomeScheme } from '../../lib/room-params.js'
 
 export function App(props: { onMounted?: () => void }) {
-  const [scheme, setScheme] = useState('hybrid://lynxview_page?bundle=main.lynx.bundle&title=Sparkling')
   const [lastResult, setLastResult] = useState<string | null>(null)
-  const secondPageScheme = 'hybrid://lynxview_page?bundle=second.lynx.bundle&title=Second%20Page&screen_orientation=portrait'
+  const homeScheme = buildHomeScheme()
+  const secondPageScheme =
+    'hybrid://lynxview_page?bundle=second.lynx.bundle&title=Second%20Page&screen_orientation=portrait'
 
   useEffect(() => {
     console.info('Hello, Sparkling template')
@@ -19,13 +21,13 @@ export function App(props: { onMounted?: () => void }) {
       { scheme: targetScheme },
       (result: router.OpenResponse) => {
         setLastResult(JSON.stringify(result))
-      }
+      },
     )
   }, [])
 
-  const openScheme = useCallback(() => {
-    openWithScheme(scheme)
-  }, [openWithScheme, scheme])
+  const openHome = useCallback(() => {
+    openWithScheme(homeScheme)
+  }, [homeScheme, openWithScheme])
 
   const openSecondPage = useCallback(() => {
     openWithScheme(secondPageScheme)
@@ -41,6 +43,21 @@ export function App(props: { onMounted?: () => void }) {
         </view>
         <view className="card">
           <view className="card__header">
+            <text className="card__title">歌词猜猜猜</text>
+            <text className="card__tag">Party</text>
+          </view>
+          <text className="label">打开派对首页</text>
+          <text className="pill pill--mono">{homeScheme}</text>
+          <view className="primary" bindtap={openHome}>
+            <text className="primary__text">进入首页</text>
+            <text className="primary__icon">→</text>
+          </view>
+          {lastResult ? (
+            <text className="result">{lastResult}</text>
+          ) : null}
+        </view>
+        <view className="card">
+          <view className="card__header">
             <text className="card__title">Multi page demo</text>
             <text className="card__tag card__tag--outline">Router</text>
           </view>
@@ -52,7 +69,6 @@ export function App(props: { onMounted?: () => void }) {
           </view>
         </view>
       </view>
-
     </scroll-view>
   )
 }

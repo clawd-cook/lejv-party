@@ -8,6 +8,16 @@ declare module '@lynx-js/types' {
     preferredTheme?: string;
     theme: string;
     isNotchScreen: boolean;
+    /** Scheme query params for room page (assumed Sparkling merge). */
+    roomId?: string;
+    playerId?: string;
+    p?: string;
+    /** Override NestJS API base URL (e.g. device → host machine IP). */
+    apiBaseUrl?: string;
+    api_base_url?: string;
+    query?: Record<string, string>;
+    queryItems?: Record<string, string>;
+    schemeParams?: Record<string, string>;
   }
 
   interface IntrinsicElements extends Lynx.IntrinsicElements {
@@ -22,6 +32,12 @@ export interface InputProps extends StandardProps {
   className?: string;
 
   value?: string;
+
+  type?: 'text' | 'number' | 'digit' | 'password' | 'tel' | 'email';
+
+  maxlength?: number;
+
+  disabled?: boolean;
 
   /**
    * Event handler for input changes
@@ -45,3 +61,4 @@ export interface InputProps extends StandardProps {
 }
 
 export type InputEvent = BaseEvent<'input', { value: string }>;
+export type BlurEvent = BaseEvent<'blur', Record<string, never>>;

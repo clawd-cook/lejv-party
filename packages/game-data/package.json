@@ -1,0 +1,12 @@
+{
+  "name": "@lejv-party/game-data",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./song-lyric/songs.json": "./songs/song-lyric/songs.json"
+  },
+  "files": [
+    "songs"
+  ]
+}
