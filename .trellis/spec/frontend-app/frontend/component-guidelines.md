@@ -60,3 +60,5 @@ Native cold start opens **`home.lynx.bundle`** (Android `SplashActivity`, iOS `S
 - Pointing splash / launch URLs back at `main.lynx.bundle`.
 - Assuming lynx-ui ships Card/Chip — it does not; compose with tokens.
 - Calling `sparkling-navigation` `open({ scheme })` without a callback — it no-ops. Use `openScheme()` from `src/lib/navigation.ts`.
+- Freezing route params with `useState(() => readRoomRouteParams())` — Sparkling may fill `queryItems` after first paint; read every render (reactive globalProps).
+- Reading only top-level `__globalProps.roomId` — prefer `queryItems` (and nested `schemeParams.extra` / `initial_data`) via `readRoomRouteParams()`.

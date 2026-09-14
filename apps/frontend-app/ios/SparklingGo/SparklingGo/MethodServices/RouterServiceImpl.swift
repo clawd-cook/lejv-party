@@ -22,6 +22,21 @@ class RouterServiceImpl: RouterService {
         
         DispatchQueue.main.async {
             func openWithRouter(completionHandler: ((Bool) -> Void)? = nil) {
+                // Ensure custom scheme query keys (roomId/playerId/…) are available
+                // to Lynx as globalProps.queryItems — matches Sparkling scheme docs.
+                if let urlString, let url = URL(string: urlString) {
+                    let items = url.spk.queryItems ?? [:]
+                    if !items.isEmpty {
+                        context.queryItems = items
+                        var props: [String: Any] = (context.globalProps as? [String: Any]) ?? [:]
+                        for (key, value) in items {
+                            props[key] = value
+                        }
+                        props["queryItems"] = items
+                        context.globalProps = props
+                    }
+                }
+
                 if let (_, success) = SPKRouter.open(withURL: urlString, context: context), success {
                     completionHandler?(true)
                     completion(.succeeded(), nil)

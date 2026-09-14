@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from '@lynx-js/react'
+import { useEffect, useReducer } from '@lynx-js/react'
 import { subscribeRoomEvents } from '@lejv-party/api-client'
 import {
   clientReducer,
@@ -22,7 +22,10 @@ import { RevealPanel } from './components/RevealPanel.js'
 import './App.css'
 
 export function App(props: { onMounted?: () => void }) {
-  const [route] = useState(() => readRoomRouteParams())
+  // Read every render: Sparkling may populate queryItems after first paint;
+  // default globalPropsMode is reactive and will re-render when they arrive.
+  // Do not freeze with useState(() => read...) or params stay empty forever.
+  const route = readRoomRouteParams()
   const roomId = route.roomId
   const playerId =
     route.playerId || (roomId ? (loadPlayerId(roomId) ?? '') : '')

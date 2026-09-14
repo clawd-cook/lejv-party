@@ -9,15 +9,18 @@ declare module '@lynx-js/types' {
     theme: string;
     isNotchScreen: boolean;
     /** Scheme query params for room page (assumed Sparkling merge). */
-    roomId?: string;
-    playerId?: string;
-    p?: string;
+    roomId?: string
+    playerId?: string
+    p?: string
     /** Override NestJS API base URL (e.g. device → host machine IP). */
-    apiBaseUrl?: string;
-    api_base_url?: string;
-    query?: Record<string, string>;
-    queryItems?: Record<string, string>;
-    schemeParams?: Record<string, string>;
+    apiBaseUrl?: string
+    api_base_url?: string
+    /** Official Sparkling bag for custom scheme query keys. */
+    queryItems?: Record<string, string>
+    query?: Record<string, string>
+    schemeParams?: Record<string, unknown>
+    extra?: Record<string, unknown>
+    initial_data?: Record<string, unknown>
   }
 
   interface IntrinsicElements extends Lynx.IntrinsicElements {

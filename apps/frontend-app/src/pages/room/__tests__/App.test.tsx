@@ -40,8 +40,10 @@ test('Room subscribes with fetch SSE when route params present', async () => {
   const prev = lynx.__globalProps
   lynx.__globalProps = {
     ...prev,
-    roomId: 'ABC123',
-    playerId: 'player-1',
+    queryItems: {
+      roomId: 'ABC123',
+      playerId: 'player-1',
+    },
   }
 
   try {
