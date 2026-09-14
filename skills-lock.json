@@ -7,6 +7,16 @@
       "skillPath": "skills/create-adaptable-composable/SKILL.md",
       "computedHash": "2f215126499d29a733be980ef9ce8f4ffb5f25a8831aec965d86c0cd21b2c5d2"
     },
+    "create-agentsmd": {
+      "source": "./awesome-copilot",
+      "sourceType": "local",
+      "computedHash": "bfbdbb76b17cca970d1d624e36ce72b6847860d740581c8865da796c1fef8552"
+    },
+    "create-readme": {
+      "source": "./awesome-copilot",
+      "sourceType": "local",
+      "computedHash": "d0ece1b2164ce1376e4ab6e98d6ac079df3a2a94f5f02224362b6a1ce2516ae9"
+    },
     "documentation-writer": {
       "source": "./awesome-copilot",
       "sourceType": "local",
