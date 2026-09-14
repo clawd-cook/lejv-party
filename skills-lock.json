@@ -7,6 +7,11 @@
       "skillPath": "skills/create-adaptable-composable/SKILL.md",
       "computedHash": "2f215126499d29a733be980ef9ce8f4ffb5f25a8831aec965d86c0cd21b2c5d2"
     },
+    "documentation-writer": {
+      "source": "./awesome-copilot",
+      "sourceType": "local",
+      "computedHash": "ee53d65b163cd7eb953a930c95841cfe398cc2c0bd24c06508bbaa07c432be35"
+    },
     "habitat-usage": {
       "source": "lynx-community/skills",
       "sourceType": "github",
