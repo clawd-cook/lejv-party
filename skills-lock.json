@@ -39,6 +39,12 @@
       "skillPath": "skills/habitat-usage/SKILL.md",
       "computedHash": "35d7376c32d00557670d90fa537b729da239b26391e9500a52ae2d4f9b55f9da"
     },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "computedHash": "2449db6ab1ded9581f69fcc56c1f64818112d05e271fd4c5da23c6523f9d3d9d"
+    },
     "lynx-a2ui": {
       "source": "lynx-community/skills",
       "sourceType": "github",
