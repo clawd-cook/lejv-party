@@ -5,8 +5,15 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
+function resolveBase(): string {
+  const raw = process.env.PAGES_BASE_PATH?.trim()
+  if (!raw) return '/'
+  return raw.endsWith('/') ? raw : `${raw}/`
+}
+
 // https://vite.dev/config/
 export default defineConfig({
+  base: resolveBase(),
   plugins: [tailwindcss(), vue(), vueDevTools()],
   resolve: {
     alias: {
@@ -22,3 +29,4 @@ export default defineConfig({
     },
   },
 })
+

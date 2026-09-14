@@ -1,4 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && npm install --workspace=backend && npm run build -w @lejv-party/domain && npm run build -w @lejv-party/validation"
+  "installCommand": "cd ../.. && npm install",
+  "buildCommand": "bash scripts/vercel-build.sh"
 }

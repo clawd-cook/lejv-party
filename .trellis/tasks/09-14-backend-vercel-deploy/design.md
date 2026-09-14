@@ -25,19 +25,21 @@ Monorepo is the real work: Vercel Root Directory = `apps/backend`, but install/b
 
 ## Build / install contract
 
-Proposed `apps/backend/vercel.json` (exact flags may be adjusted during implement if CLI/UI requires project settings instead):
+`apps/backend/vercel.json`:
 
-- `installCommand`: from backend dir, `cd ../.. && npm install` (lockfile at root).
-- `buildCommand`: from root, build `@lejv-party/domain`, `@lejv-party/validation`, then `backend` (`game-data` is JSON-only, no build).
+- `installCommand`: `cd ../.. && npm install` (lockfile at root).
+- `buildCommand`: `bash scripts/vercel-build.sh` — builds domain → validation → backend, then **copies** those packages (plus JSON `game-data`) into `apps/backend/node_modules/@lejv-party/*` so the Nest function can resolve them at runtime (workspace symlinks / `packages/` alone are not enough).
 - Leave Nest entry detection to Vercel; avoid obsolete `builds`/`routes` v2 unless needed as fallback.
+- Entry: `src/main.ts` must call `void bootstrap()` (not top-level `await bootstrap()`); Vercel patches `Server#listen` and only binds after the module finishes evaluating.
 
-Local Node remains 24.20.0; Vercel’s build image Node is whatever the project setting allows—prefer Node 24.x on the project if configurable.
+Local Node remains 24.20.0; project Node set to **24.x**.
 
 ## Runtime / ops notes
 
 - Nest runs as **one** Vercel Function (Fluid). In-memory rooms and SSE subscriptions do not survive cold starts or scale-out; accepted for MVP.
-- Without `AI_*`, translator paths fail; boot and non-AI routes still work.
-- Do not curl-verify beyond returning the preview URL per deploy skill; smoke `GET /api` once for acceptance is in-task exception to confirm boot (optional CLI `curl` after deploy ready).
+- Without `AI_*`, translator paths fail; boot and non-AI routes still work. Nest Observe stays off unless `NEST_OBSERVE_APP_KEY` / `NEST_OBSERVE_APP_SECRET` are set.
+- SSO deployment protection was disabled on this preview project so `GET /api` is publicly reachable.
+- Smoke `GET /api` once for acceptance (in-task exception to the deploy skill’s no-curl default).
 
 ## Rollback
 
