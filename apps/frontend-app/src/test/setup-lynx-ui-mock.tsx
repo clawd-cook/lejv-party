@@ -24,6 +24,15 @@ type ScrollViewMockProps = {
   scrollOrientation?: 'vertical' | 'horizontal'
 }
 
+type PassthroughProps = {
+  children?: ReactNode
+  className?: string
+  as?: 'View' | 'ScrollView'
+  scrollOrientation?: 'vertical' | 'horizontal'
+  offset?: number
+  androidStatusBarPlusBottomBarHeight?: number
+}
+
 vi.mock('@lynx-js/lynx-ui', () => ({
   Button: (props: ButtonMockProps) => {
     const content =
@@ -46,7 +55,12 @@ vi.mock('@lynx-js/lynx-ui', () => ({
       className={props.className}
       placeholder={props.placeholder}
       maxlength={props.maxLength}
-      value={props.value ?? props.defaultValue}
+      // Only set value when controlled; defaultValue alone must stay uncontrolled.
+      {...(props.value !== undefined
+        ? { value: props.value }
+        : props.defaultValue !== undefined
+          ? { value: props.defaultValue }
+          : {})}
       disabled={props.readonly}
       bindinput={(e) => props.onInput?.(e.detail.value)}
     />
@@ -59,4 +73,21 @@ vi.mock('@lynx-js/lynx-ui', () => ({
       {props.children}
     </scroll-view>
   ),
+  KeyboardAwareRoot: (props: PassthroughProps) => (
+    <view className={props.className}>{props.children}</view>
+  ),
+  KeyboardAwareTrigger: (props: PassthroughProps) => (
+    <view className={props.className}>{props.children}</view>
+  ),
+  KeyboardAwareResponder: (props: PassthroughProps) =>
+    props.as === 'ScrollView' ? (
+      <scroll-view
+        className={props.className}
+        scroll-orientation={props.scrollOrientation}
+      >
+        {props.children}
+      </scroll-view>
+    ) : (
+      <view className={props.className}>{props.children}</view>
+    ),
 }))

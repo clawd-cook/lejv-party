@@ -26,7 +26,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  text-align: center;
   width: 100%;
   max-width: 720px;
   margin-bottom: 12px;
@@ -39,22 +38,25 @@
   background: var(--neutral-ambient);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.4px;
   color: var(--content-muted);
+  text-align: center;
 }
 
 .title {
   font-size: 22px;
   font-weight: 800;
-  letter-spacing: 0.2px;
   line-height: 30px;
   color: var(--content);
+  text-align: center;
+  white-space: normal;
 }
 
 .subtitle {
   font-size: 14px;
   line-height: 20px;
   color: var(--content-muted);
+  text-align: center;
+  white-space: normal;
 }
 
 .card {
@@ -80,6 +82,7 @@
   font-size: 16px;
   font-weight: 800;
   color: var(--content);
+  white-space: normal;
 }
 
 .card__tag {
@@ -116,9 +119,10 @@
   border-radius: 10px;
   padding: 12px;
   font-size: 14px;
-  line-height: 20px;
   color: var(--content);
   width: 100%;
+  /* Lynx <input> is a native replaced element; give a definite touch target. */
+  min-height: 44px;
 }
 
 .btn {
@@ -191,6 +195,7 @@
   font-size: 13px;
   color: var(--primary);
   line-height: 18px;
+  white-space: normal;
 }
 
 .ok {
@@ -198,12 +203,14 @@
   color: var(--content-2);
   font-weight: 700;
   line-height: 20px;
+  white-space: normal;
 }
 
 .muted {
   font-size: 13px;
   color: var(--content-muted);
   line-height: 18px;
+  white-space: normal;
 }
 
 .stack {
@@ -217,7 +224,6 @@
 .room-code {
   font-size: 28px;
   font-weight: 800;
-  letter-spacing: 4px;
   color: var(--content);
   font-family: 'Menlo', 'SFMono-Regular', Consolas, monospace;
 }
@@ -244,6 +250,8 @@
   align-items: center;
   gap: 6px;
   flex: 1;
+  /* Lynx flex items lack Web min-width:auto; allow shrink without crushing siblings. */
+  min-width: 0;
 }
 
 .row__rank {
@@ -256,6 +264,11 @@
   font-size: 14px;
   color: var(--content);
   font-weight: 600;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row__score {
@@ -263,6 +276,7 @@
   font-weight: 800;
   font-family: 'Menlo', 'SFMono-Regular', Consolas, monospace;
   color: var(--content);
+  flex-shrink: 0;
 }
 
 .quote {
@@ -280,6 +294,7 @@
   font-weight: 600;
   line-height: 26px;
   color: var(--content);
+  white-space: normal;
 }
 
 .countdown {

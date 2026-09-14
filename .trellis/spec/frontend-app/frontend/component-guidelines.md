@@ -24,12 +24,15 @@ Pages under `src/pages/{main,home,room,second}/` use ReactLynx. Interactive cont
 | Need | Use |
 | --- | --- |
 | Pressable action / lobby toggle | `Button` from `@lynx-js/lynx-ui` (`onClick`) |
-| Text field | `Input` from `@lynx-js/lynx-ui` |
-| Page scroll | `ScrollView` from `@lynx-js/lynx-ui` |
+| Text field | `Input` from `@lynx-js/lynx-ui` — prefer **uncontrolled** (`onInput` only; avoid `value=` unless required). Remount with `key` to clear. |
+| Page scroll (no inputs) | `ScrollView` from `@lynx-js/lynx-ui` |
+| Page scroll with inputs | `KeyboardAwareRoot` + `KeyboardAwareResponder as="ScrollView"` + wrap each field in `KeyboardAwareTrigger` |
 
 Import from the aggregate package `@lynx-js/lynx-ui` unless a package-specific import is required by docs.
 
 There is no lynx-ui Card / Chip / Typography. Cards and labels stay as `view` / `text` with Luna token CSS. Lobby multi/single selects use `Button` + selected `className` (not RadioGroup/Checkbox unless product asks).
+
+Lynx `<text>` defaults to `white-space: nowrap` — set `white-space: normal` on any copy that must wrap (`.subtitle`, `.muted`, `.error`, `.quote__text`, …).
 
 ---
 

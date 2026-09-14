@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from '@lynx-js/react'
 import { ApiRequestError, skipQuestion, submitAnswer } from '@lejv-party/api-client'
 import type { GameStatePublic, PlayerState } from '@lejv-party/domain'
-import { Button, Input } from '@lynx-js/lynx-ui'
+import { Button, Input, KeyboardAwareTrigger } from '@lynx-js/lynx-ui'
 
 import { useNow } from '../../../hooks/useNow.js'
 import { Leaderboard } from './Leaderboard.js'
@@ -90,16 +90,18 @@ export function QuestionPanel(props: Props) {
           </text>
         </view>
 
-        <view className="field">
-          <Input
-            className="input"
-            placeholder={selfAnswered ? '你已作答' : '输入歌名'}
-            maxLength={64}
-            readonly={selfAnswered || submitting}
-            value={answer}
-            onInput={setAnswer}
-          />
-        </view>
+        <KeyboardAwareTrigger offset={0}>
+          <view className="field">
+            <Input
+              key={String(props.game.questionIndex)}
+              className="input"
+              placeholder={selfAnswered ? '你已作答' : '输入歌名'}
+              maxLength={64}
+              readonly={selfAnswered || submitting}
+              onInput={setAnswer}
+            />
+          </view>
+        </KeyboardAwareTrigger>
         <Button
           className="btn"
           disabled={submitDisabled}
