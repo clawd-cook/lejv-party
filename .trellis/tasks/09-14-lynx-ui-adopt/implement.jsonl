@@ -1,0 +1,9 @@
+{"file": ".trellis/spec/frontend-app/frontend/index.md", "reason": "frontend-app frontend guideline index and room API cross-link"}
+{"file": ".trellis/spec/guides/room-party-api-contract.md", "reason": "preserve room REST/SSE/scheme contracts while changing Lynx UI only"}
+{"file": ".trellis/spec/frontend-app/frontend/component-guidelines.md", "reason": "component patterns for page/panel structure"}
+{"file": ".trellis/spec/frontend-app/frontend/quality-guidelines.md", "reason": "quality bar / forbidden patterns during UI rewrite"}
+{"file": ".claude/skills/lynx-ui/references/foundation.md", "reason": "lynx-ui install, import, enableNewGesture boundaries"}
+{"file": ".claude/skills/lynx-ui/references/theming-and-tokens.md", "reason": "luna-light and Luna CSS token setup"}
+{"file": ".claude/skills/lynx-ui/references/components/button/api.md", "reason": "Button props for CTAs and lobby toggles"}
+{"file": ".claude/skills/lynx-ui/references/components/input/api.md", "reason": "Input replacement for nickname/room/answer fields"}
+{"file": ".claude/skills/lynx-ui/references/components/scroll-view/api.md", "reason": "ScrollView replacement for page scroll containers"}

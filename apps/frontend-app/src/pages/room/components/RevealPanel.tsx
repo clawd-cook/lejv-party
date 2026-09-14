@@ -26,7 +26,7 @@ export function RevealPanel(props: Props) {
     <view className="stack">
       <view className="card">
         <text className="muted">第 {props.game.questionIndex} 题 · 答案揭晓</text>
-        <text className="title-dark">{current?.title ?? '—'}</text>
+        <text className="title">{current?.title ?? '—'}</text>
         <text className="muted">{current?.artist ?? ''}</text>
         <view className="quote">
           {scorerName ? (

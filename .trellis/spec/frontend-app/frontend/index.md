@@ -15,10 +15,10 @@ This directory contains guidelines for frontend development. Fill in each file w
 | Guide | Description | Status |
 |-------|-------------|--------|
 | [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Component Guidelines](./component-guidelines.md) | Component patterns, props, composition | To fill |
+| [Component Guidelines](./component-guidelines.md) | lynx-ui controls, Luna theme, page structure | Filled |
 | [Hook Guidelines](./hook-guidelines.md) | Custom hooks, data fetching patterns | To fill |
 | [State Management](./state-management.md) | Local state, global state, server state | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
+| [Quality Guidelines](./quality-guidelines.md) | Forbidden/required UI patterns, test notes | Filled |
 | [Type Safety](./type-safety.md) | Type patterns, validation | To fill |
 | [Room API (cross-layer)](../../guides/room-party-api-contract.md) | fetch SSE + Lynx scheme params | Filled |
 

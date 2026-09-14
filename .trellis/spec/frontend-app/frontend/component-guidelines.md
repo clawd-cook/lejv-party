@@ -1,59 +1,58 @@
 # Component Guidelines
 
-> How components are built in this project.
+> How components are built in `apps/frontend-app` (ReactLynx / Sparkling).
 
 ---
 
 ## Overview
 
-<!--
-Document your project's component conventions here.
-
-Questions to answer:
-- What component patterns do you use?
-- How are props defined?
-- How do you handle composition?
-- What accessibility standards apply?
--->
-
-(To be filled by the team)
+Pages under `src/pages/{main,home,room,second}/` use ReactLynx. Interactive controls come from `@lynx-js/lynx-ui`. Layout uses Lynx elements (`view`, `text`, `image`) plus Luna tokens — not HTML and not hand-rolled control skins.
 
 ---
 
 ## Component Structure
 
-<!-- Standard structure of a component file -->
-
-(To be filled by the team)
+- Page entry: `index.tsx` calls `root.render(<App />)`.
+- Screen UI: `App.tsx` (+ optional `components/` for room panels).
+- Shared scheme helpers: `src/lib/room-params.ts`.
+- Shared styles: `src/App.css` (Luna import + layout helpers); page `App.css` may re-export.
 
 ---
 
-## Props Conventions
+## Interactive controls (lynx-ui)
 
-<!-- How props should be defined and typed -->
+| Need | Use |
+| --- | --- |
+| Pressable action / lobby toggle | `Button` from `@lynx-js/lynx-ui` (`onClick`) |
+| Text field | `Input` from `@lynx-js/lynx-ui` |
+| Page scroll | `ScrollView` from `@lynx-js/lynx-ui` |
 
-(To be filled by the team)
+Import from the aggregate package `@lynx-js/lynx-ui` unless a package-specific import is required by docs.
+
+There is no lynx-ui Card / Chip / Typography. Cards and labels stay as `view` / `text` with Luna token CSS. Lobby multi/single selects use `Button` + selected `className` (not RadioGroup/Checkbox unless product asks).
 
 ---
 
 ## Styling Patterns
 
-<!-- How styles are applied (CSS modules, styled-components, Tailwind, etc.) -->
+1. Depend on `@lynx-js/luna-styles` and `@import '@lynx-js/luna-styles/index.css'` in shared CSS.
+2. Page root: `className` includes `luna-light` (built-in theme for this app).
+3. Surfaces/text/actions use tokens: `var(--canvas)`, `var(--paper)`, `var(--content)`, `var(--primary)`, `var(--line)`, etc.
+4. No hex/rgb brand colors in shared CSS. Luna has no error/success tokens — map `.error` / `.countdown--warn` → `var(--primary)`, `.ok` → `var(--content-2)`.
 
-(To be filled by the team)
+`app.config.ts` ReactLynx plugin uses `enableNewGesture: true` for lynx-ui gesture-capable components.
 
 ---
 
-## Accessibility
+## Cold start entry
 
-<!-- A11y requirements and patterns -->
-
-(To be filled by the team)
+Native cold start opens **`home.lynx.bundle`** (Android `SplashActivity`, iOS `SparklingSwiftVC` / `SparklingSwiftUIView`). `main` / `second` remain build entries as slim debug shells — not the production entry.
 
 ---
 
 ## Common Mistakes
 
-<!-- Component-related mistakes your team has made -->
-
-(To be filled by the team)
+- Hand-writing `bindtap` pseudo-buttons or native `<input>` as the primary control path.
+- Restyling controls with brand hex gradients instead of Luna tokens.
+- Pointing splash / launch URLs back at `main.lynx.bundle`.
+- Assuming lynx-ui ships Card/Chip — it does not; compose with tokens.

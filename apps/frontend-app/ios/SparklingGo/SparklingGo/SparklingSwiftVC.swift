@@ -25,7 +25,7 @@ struct SPKSwiftVC: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> some UIViewController {
-        let url = "hybrid://lynxview?bundle=.%2Fmain.lynx.bundle&hide_status_bar=1&hide_nav_bar=1"
+        let url = "hybrid://lynxview?bundle=.%2Fhome.lynx.bundle&hide_status_bar=1&hide_nav_bar=1"
         let context = SPKContext()
         let elements = SparklingLynxElement(lynxElementName: "input", lynxElementClassName: LynxInput.self)
         context.customUIElements = [elements]

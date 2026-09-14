@@ -20,7 +20,7 @@ class SplashActivity : AppCompatActivity() {
         val initialData: String = JsonUtils.toJson(initData)
 
         val context = SparklingContext()
-        context.scheme = "hybrid://lynxview_page?bundle=main.lynx.bundle&hide_nav_bar=1&screen_orientation=portrait"
+        context.scheme = "hybrid://lynxview_page?bundle=home.lynx.bundle&hide_nav_bar=1&screen_orientation=portrait&title=Home"
         context.withInitData("{ \"initial_data\":$initialData}")
         Sparkling.build(this, context).navigate()
         finish()

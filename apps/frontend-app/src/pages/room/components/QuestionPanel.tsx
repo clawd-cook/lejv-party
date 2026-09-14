@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from '@lynx-js/react'
 import { ApiRequestError, skipQuestion, submitAnswer } from '@lejv-party/api-client'
 import type { GameStatePublic, PlayerState } from '@lejv-party/domain'
+import { Button, Input } from '@lynx-js/lynx-ui'
 
 import { useNow } from '../../../hooks/useNow.js'
 import { Leaderboard } from './Leaderboard.js'
@@ -71,6 +72,9 @@ export function QuestionPanel(props: Props) {
     })
   }, [isHost, props.playerId, props.roomId])
 
+  const submitDisabled =
+    selfAnswered || submitting || !answer.trim()
+
   return (
     <view className="stack">
       <view className="card">
@@ -87,26 +91,24 @@ export function QuestionPanel(props: Props) {
         </view>
 
         <view className="field">
-          <input
+          <Input
             className="input"
             placeholder={selfAnswered ? '你已作答' : '输入歌名'}
-            maxlength={64}
-            disabled={selfAnswered || submitting}
-            bindinput={(e) => setAnswer(e.detail.value)}
+            maxLength={64}
+            readonly={selfAnswered || submitting}
+            value={answer}
+            onInput={setAnswer}
           />
         </view>
-        <view
-          className={
-            selfAnswered || submitting || !answer.trim()
-              ? 'primary primary--disabled'
-              : 'primary'
-          }
-          bindtap={onSubmit}
+        <Button
+          className="btn"
+          disabled={submitDisabled}
+          onClick={onSubmit}
         >
-          <text className="primary__text">
+          <text className="btn__text">
             {submitting ? '提交中…' : '抢答'}
           </text>
-        </view>
+        </Button>
         {feedback ? (
           <text className={selfCorrect ? 'ok' : 'error'}>{feedback}</text>
         ) : null}
@@ -116,9 +118,9 @@ export function QuestionPanel(props: Props) {
         </text>
 
         {isHost ? (
-          <view className="secondary" bindtap={onSkip}>
-            <text className="secondary__text">下一题（跳过）</text>
-          </view>
+          <Button className="btn btn--secondary" onClick={onSkip}>
+            <text className="btn__text">下一题（跳过）</text>
+          </Button>
         ) : null}
       </view>
 

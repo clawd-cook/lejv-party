@@ -10,6 +10,7 @@ import type {
   PlayerState,
   RoomConfig,
 } from '@lejv-party/domain'
+import { Button } from '@lynx-js/lynx-ui'
 
 const LEVELS: readonly CEFRLevel[] = ['A2', 'B1', 'B2', 'C1']
 const ERAS: readonly Era[] = ['80s', '90s', '00s', '10s', '20s']
@@ -24,31 +25,28 @@ type Props = {
   config: RoomConfig
 }
 
-function Chip(props: {
+function ToggleButton(props: {
   label: string
   selected: boolean
   disabled?: boolean
-  onTap: () => void
+  onClick: () => void
 }) {
   const className = [
-    'chip',
-    props.selected ? 'chip--on' : '',
-    props.disabled ? 'chip--disabled' : '',
+    'btn',
+    'btn--toggle',
+    props.selected ? 'is-selected' : '',
   ]
     .filter(Boolean)
     .join(' ')
 
   return (
-    <view
+    <Button
       className={className}
-      bindtap={() => {
-        if (!props.disabled) props.onTap()
-      }}
+      disabled={props.disabled}
+      onClick={props.onClick}
     >
-      <text className={props.selected ? 'chip__text chip__text--on' : 'chip__text'}>
-        {props.label}
-      </text>
-    </view>
+      <text className="btn__text">{props.label}</text>
+    </Button>
   )
 }
 
@@ -148,12 +146,12 @@ export function LobbyPanel(props: Props) {
         <text className="label">词汇量水平（CEFR）</text>
         <view className="chip-row">
           {LEVELS.map((level) => (
-            <Chip
+            <ToggleButton
               key={level}
               label={level}
               selected={props.config.level === level}
               disabled={!isHost}
-              onTap={() => patchConfig({ level })}
+              onClick={() => patchConfig({ level })}
             />
           ))}
         </view>
@@ -161,12 +159,12 @@ export function LobbyPanel(props: Props) {
         <text className="label">歌曲年代（至少选 1 项）</text>
         <view className="chip-row">
           {ERAS.map((era) => (
-            <Chip
+            <ToggleButton
               key={era}
               label={era}
               selected={props.config.eras.includes(era)}
               disabled={!isHost}
-              onTap={() => toggleEra(era)}
+              onClick={() => toggleEra(era)}
             />
           ))}
         </view>
@@ -174,12 +172,12 @@ export function LobbyPanel(props: Props) {
         <text className="label">曲风（至少选 1 项）</text>
         <view className="chip-row">
           {GENRES.map((genre) => (
-            <Chip
+            <ToggleButton
               key={genre}
               label={genre}
               selected={props.config.genres.includes(genre)}
               disabled={!isHost}
-              onTap={() => toggleGenre(genre)}
+              onClick={() => toggleGenre(genre)}
             />
           ))}
         </view>
@@ -187,25 +185,26 @@ export function LobbyPanel(props: Props) {
         <text className="label">胜利分数</text>
         <view className="chip-row">
           {VICTORY_SCORES.map((score) => (
-            <Chip
+            <ToggleButton
               key={score}
               label={`${score} 分`}
               selected={props.config.victoryScore === score}
               disabled={!isHost}
-              onTap={() => patchConfig({ victoryScore: score })}
+              onClick={() => patchConfig({ victoryScore: score })}
             />
           ))}
         </view>
 
         {isHost ? (
-          <view
-            className={canStart && !starting ? 'primary' : 'primary primary--disabled'}
-            bindtap={onStart}
+          <Button
+            className="btn"
+            disabled={!canStart || starting}
+            onClick={onStart}
           >
-            <text className="primary__text">
+            <text className="btn__text">
               {starting ? '准备中…' : '开始游戏'}
             </text>
-          </view>
+          </Button>
         ) : (
           <text className="muted">等待房主开始…</text>
         )}

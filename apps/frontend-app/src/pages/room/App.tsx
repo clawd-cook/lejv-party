@@ -6,6 +6,7 @@ import {
   savePlayerId,
   type ClientRoomState,
 } from '@lejv-party/client-core'
+import { ScrollView } from '@lynx-js/lynx-ui'
 
 import { ensureApiClientConfigured } from '../../lib/api.js'
 import { readRoomRouteParams } from '../../lib/room-params.js'
@@ -59,66 +60,68 @@ export function App(props: { onMounted?: () => void }) {
   }, [roomId, playerId])
 
   return (
-    <scroll-view className="page-scroll" scroll-orientation="vertical">
-      <view className="app">
-        <view className="hero">
-          <text className="eyebrow">LEJV Party · Room</text>
-          <text className="title">歌词猜猜猜</text>
-          {roomId ? (
-            <text className="subtitle">房间 {roomId}</text>
+    <view className="luna-light page-root">
+      <ScrollView className="page-scroll" scrollOrientation="vertical">
+        <view className="app">
+          <view className="hero">
+            <text className="eyebrow">LEJV Party · Room</text>
+            <text className="title">歌词猜猜猜</text>
+            {roomId ? (
+              <text className="subtitle">房间 {roomId}</text>
+            ) : (
+              <text className="subtitle">缺少房间参数</text>
+            )}
+          </view>
+
+          {!roomId || !playerId ? (
+            <view className="card">
+              <text className="card__title">无法进入房间</text>
+              <text className="muted">
+                需要 scheme 查询参数 roomId 与 playerId（或 p）。当前：roomId=
+                {roomId || '∅'} playerId={playerId || '∅'}
+              </text>
+            </view>
+          ) : !state ? (
+            <view className="card">
+              <text className="muted">正在连接房间 {roomId} …</text>
+            </view>
+          ) : state.phase === 'lobby' ? (
+            <LobbyPanel
+              roomId={state.id}
+              playerId={playerId}
+              hostId={state.hostId}
+              players={state.players}
+              config={state.config}
+            />
+          ) : state.phase === 'question' && state.game ? (
+            <QuestionPanel
+              roomId={state.id}
+              playerId={playerId}
+              hostId={state.hostId}
+              players={state.players}
+              game={state.game}
+            />
+          ) : state.phase === 'reveal' && state.game ? (
+            <RevealPanel
+              players={state.players}
+              hostId={state.hostId}
+              playerId={playerId}
+              game={state.game}
+            />
+          ) : state.phase === 'ended' && state.game ? (
+            <EndedPanel
+              players={state.players}
+              hostId={state.hostId}
+              playerId={playerId}
+              game={state.game}
+            />
           ) : (
-            <text className="subtitle">缺少房间参数</text>
+            <view className="card">
+              <text className="muted">未知阶段</text>
+            </view>
           )}
         </view>
-
-        {!roomId || !playerId ? (
-          <view className="card">
-            <text className="card__title">无法进入房间</text>
-            <text className="muted">
-              需要 scheme 查询参数 roomId 与 playerId（或 p）。当前：roomId=
-              {roomId || '∅'} playerId={playerId || '∅'}
-            </text>
-          </view>
-        ) : !state ? (
-          <view className="card">
-            <text className="muted">正在连接房间 {roomId} …</text>
-          </view>
-        ) : state.phase === 'lobby' ? (
-          <LobbyPanel
-            roomId={state.id}
-            playerId={playerId}
-            hostId={state.hostId}
-            players={state.players}
-            config={state.config}
-          />
-        ) : state.phase === 'question' && state.game ? (
-          <QuestionPanel
-            roomId={state.id}
-            playerId={playerId}
-            hostId={state.hostId}
-            players={state.players}
-            game={state.game}
-          />
-        ) : state.phase === 'reveal' && state.game ? (
-          <RevealPanel
-            players={state.players}
-            hostId={state.hostId}
-            playerId={playerId}
-            game={state.game}
-          />
-        ) : state.phase === 'ended' && state.game ? (
-          <EndedPanel
-            players={state.players}
-            hostId={state.hostId}
-            playerId={playerId}
-            game={state.game}
-          />
-        ) : (
-          <view className="card">
-            <text className="muted">未知阶段</text>
-          </view>
-        )}
-      </view>
-    </scroll-view>
+      </ScrollView>
+    </view>
   )
 }

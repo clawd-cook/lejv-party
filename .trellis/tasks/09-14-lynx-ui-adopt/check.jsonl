@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/frontend-app/frontend/index.md", "reason": "verify frontend-app guideline index still applies after UI migration"}
+{"file": ".trellis/spec/guides/room-party-api-contract.md", "reason": "check UI changes did not alter room API/scheme contracts"}
+{"file": ".trellis/spec/frontend-app/frontend/quality-guidelines.md", "reason": "quality compliance pass"}
+{"file": ".trellis/spec/frontend-app/frontend/type-safety.md", "reason": "type-safety expectations for ReactLynx panels"}
+{"file": ".claude/skills/lynx-ui/references/theming-and-tokens.md", "reason": "confirm luna-light + tokens used instead of hex control skins"}
+{"file": ".claude/skills/lynx-ui/references/components/button/api.md", "reason": "Button usage matches public API"}
+{"file": ".claude/skills/lynx-ui/references/components/input/api.md", "reason": "Input usage matches public API"}
+{"file": ".claude/skills/reactlynx-best-practices/SKILL.md", "reason": "dual-thread / event binding hygiene after component swap"}

@@ -1,14 +1,11 @@
 import { useCallback, useEffect } from '@lynx-js/react'
-
+import { Button } from '@lynx-js/lynx-ui'
 import { close } from 'sparkling-navigation'
 
 import './App.css'
 
 export function App(props: { onMounted?: () => void }) {
-
   useEffect(() => {
-    console.info('Hello, Sparkling second page')
-    console.info('lynx.__globalProps', lynx.__globalProps)
     props.onMounted?.()
   }, [props])
 
@@ -16,18 +13,18 @@ export function App(props: { onMounted?: () => void }) {
     close()
   }, [])
 
-  
-
   return (
-    <view className="page">
-      <view className="App">
-        <view className="Banner">
-          <text className="Title">This is the second page</text>
+    <view className="luna-light page-root">
+      <view className="app">
+        <view className="hero">
+          <text className="eyebrow">LEJV Party · Debug</text>
+          <text className="title">second placeholder</text>
+          <text className="subtitle">Minimal lynx-ui debug shell.</text>
         </view>
-        <view className="Content">
-          <text className="Button" bindtap={onClose}>
-            Close
-          </text>
+        <view className="card">
+          <Button className="btn btn--secondary" onClick={onClose}>
+            <text className="btn__text">Close</text>
+          </Button>
         </view>
       </view>
     </view>

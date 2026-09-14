@@ -6,7 +6,7 @@ import { App } from '../App.js'
 
 vi.mock('sparkling-navigation', () => ({ open: vi.fn() }))
 
-test('App renders hero content', async () => {
+test('App renders main placeholder', async () => {
   const onMounted = vi.fn()
 
   render(<App onMounted={onMounted} />)
@@ -14,6 +14,6 @@ test('App renders hero content', async () => {
   expect(onMounted).toBeCalledTimes(1)
 
   const { findByText } = getQueriesForElement(elementTree.root!)
-  const title = await findByText('Sparkling Starter')
+  const title = await findByText('main placeholder')
   expect(title).toBeInTheDocument()
 })

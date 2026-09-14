@@ -26,7 +26,9 @@ const lynxConfig = defineConfig({
         return `${url}?fullscreen=true`
       },
     }),
-    pluginReactLynx(),
+    pluginReactLynx({
+      enableNewGesture: true,
+    }),
   ],
 })
 

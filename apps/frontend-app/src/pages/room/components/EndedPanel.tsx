@@ -1,5 +1,6 @@
 import { useCallback } from '@lynx-js/react'
 import type { GameStatePublic, PlayerState } from '@lejv-party/domain'
+import { Button } from '@lynx-js/lynx-ui'
 import { close } from 'sparkling-navigation'
 
 import { Leaderboard } from './Leaderboard.js'
@@ -28,9 +29,9 @@ export function EndedPanel(props: Props) {
       <view className="card">
         <text className="muted">比赛结束</text>
         {winnerName ? (
-          <text className="title-dark">🏆 {winnerName} 获胜！</text>
+          <text className="title">🏆 {winnerName} 获胜！</text>
         ) : (
-          <text className="title-dark">比赛提前结束</text>
+          <text className="title">比赛提前结束</text>
         )}
         {lastTitle ? (
           <view className="quote">
@@ -39,9 +40,9 @@ export function EndedPanel(props: Props) {
             {lastArtist ? <text className="muted">{lastArtist}</text> : null}
           </view>
         ) : null}
-        <view className="secondary" bindtap={onClose}>
-          <text className="secondary__text">关闭</text>
-        </view>
+        <Button className="btn btn--secondary" onClick={onClose}>
+          <text className="btn__text">关闭</text>
+        </Button>
       </view>
 
       <Leaderboard

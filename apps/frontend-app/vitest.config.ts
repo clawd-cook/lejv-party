@@ -7,6 +7,7 @@ import { createVitestConfig } from '@lynx-js/react/testing-library/vitest-config
 const defaultConfig = await createVitestConfig()
 const config = defineConfig({
   test: {
+    setupFiles: ['./src/test/setup-lynx-ui-mock.tsx'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'lcov', 'html'],
