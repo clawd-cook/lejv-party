@@ -1,0 +1,2 @@
+2026-09-14 13:16:36.555 [NLS] resolveNLSConfiguration 被调用: userLocale=en, commit=bf58862d8d60ad8747b8588ad1b8c1ae956ddad6
+2026-09-14 13:16:36.555 [NLS] 提前返回默认配置 (dev=false, locale=en, commit=bf58862d8d60ad8747b8588ad1b8c1ae956ddad6, userDataPath=false)
