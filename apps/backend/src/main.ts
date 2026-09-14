@@ -10,4 +10,7 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
 }
-await bootstrap();
+
+// Do not top-level-await bootstrap(): Vercel patches Server#listen and only
+// starts the captured server after the entry module finishes evaluating.
+void bootstrap();
