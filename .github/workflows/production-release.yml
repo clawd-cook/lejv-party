@@ -362,13 +362,7 @@ jobs:
 
       - name: Promote backend preview → Production
         if: needs.resolve.outputs.promote_mode == 'promote-preview'
-        run: |
-          set -euo pipefail
-          echo "Promoting backend ${{ needs.resolve.outputs.backend_url }}"
-          vercel promote "${{ needs.resolve.outputs.backend_url }}" \
-            --yes \
-            --scope "${VERCEL_SCOPE}" \
-            --timeout 5m
+        run: bash .github/scripts/vercel-promote-idempotent.sh "${{ needs.resolve.outputs.backend_url }}"
 
       - name: Rebuild backend Production (fallback)
         if: needs.resolve.outputs.promote_mode == 'rebuild-prod'
@@ -394,13 +388,7 @@ jobs:
 
       - name: Promote web preview → Production
         if: needs.resolve.outputs.promote_mode == 'promote-preview'
-        run: |
-          set -euo pipefail
-          echo "Promoting web ${{ needs.resolve.outputs.web_url }}"
-          vercel promote "${{ needs.resolve.outputs.web_url }}" \
-            --yes \
-            --scope "${VERCEL_SCOPE}" \
-            --timeout 5m
+        run: bash .github/scripts/vercel-promote-idempotent.sh "${{ needs.resolve.outputs.web_url }}"
 
       - name: Rebuild web Production (fallback)
         if: needs.resolve.outputs.promote_mode == 'rebuild-prod'
