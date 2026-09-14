@@ -129,6 +129,12 @@
       "skillPath": "skills/vanilla-lynx/SKILL.md",
       "computedHash": "a7d426d10836ac51ab2fdf24981c835beca2e7cb38e986ad1289b75bc0ade1d1"
     },
+    "vercel-cli-with-tokens": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-cli-with-tokens/SKILL.md",
+      "computedHash": "a2f596ac516fe8986386f9562f4c94604af9fb6a0fc417d263cbe6dc05117b72"
+    },
     "vue-best-practices": {
       "source": "vuejs-ai/skills",
       "sourceType": "github",
