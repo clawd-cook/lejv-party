@@ -1,6 +1,7 @@
 {
   "name": "lejv-party",
   "version": "1.0.0",
+  "private": true,
   "description": "",
   "repository": {
     "type": "git",
@@ -13,5 +14,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "packageManager": "npm@11.19.0"
+  "packageManager": "npm@11.19.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
 }
