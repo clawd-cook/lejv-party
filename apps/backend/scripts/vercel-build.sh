@@ -21,11 +21,17 @@ npm run build -w backend
 # Materialize workspace packages next to the Nest app so Node can resolve
 # `@lejv-party/*` from apps/backend/src without relying on broken workspace
 # symlink rewriting inside the Vercel function bundle.
+# Drop each package's own node_modules (dev tooling / workspace links) — runtime
+# deps such as zod resolve from apps/backend/node_modules after root install.
 mkdir -p "$BACKEND/node_modules/@lejv-party"
-rm -rf \
-  "$BACKEND/node_modules/@lejv-party/domain" \
-  "$BACKEND/node_modules/@lejv-party/validation" \
-  "$BACKEND/node_modules/@lejv-party/game-data"
-cp -R "$ROOT/packages/domain" "$BACKEND/node_modules/@lejv-party/domain"
-cp -R "$ROOT/packages/validation" "$BACKEND/node_modules/@lejv-party/validation"
-cp -R "$ROOT/packages/game-data" "$BACKEND/node_modules/@lejv-party/game-data"
+materialize_pkg() {
+  local name="$1"
+  local src="$ROOT/packages/$name"
+  local dest="$BACKEND/node_modules/@lejv-party/$name"
+  rm -rf "$dest"
+  cp -R "$src" "$dest"
+  rm -rf "$dest/node_modules"
+}
+materialize_pkg domain
+materialize_pkg validation
+materialize_pkg game-data

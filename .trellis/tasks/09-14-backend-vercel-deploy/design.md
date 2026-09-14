@@ -28,7 +28,7 @@ Monorepo is the real work: Vercel Root Directory = `apps/backend`, but install/b
 `apps/backend/vercel.json`:
 
 - `installCommand`: `cd ../.. && npm install` (lockfile at root).
-- `buildCommand`: `bash scripts/vercel-build.sh` — builds domain → validation → backend, then **copies** those packages (plus JSON `game-data`) into `apps/backend/node_modules/@lejv-party/*` so the Nest function can resolve them at runtime (workspace symlinks / `packages/` alone are not enough).
+- `buildCommand`: `bash scripts/vercel-build.sh` — builds domain → validation → backend, then **copies** those packages (plus JSON `game-data`) into `apps/backend/node_modules/@lejv-party/*` so the Nest function can resolve them at runtime (workspace symlinks / `packages/` alone are not enough). Each copy drops that package’s own `node_modules` (dev tooling); runtime deps resolve from `apps/backend/node_modules`.
 - Leave Nest entry detection to Vercel; avoid obsolete `builds`/`routes` v2 unless needed as fallback.
 - Entry: `src/main.ts` must call `void bootstrap()` (not top-level `await bootstrap()`); Vercel patches `Server#listen` and only binds after the module finishes evaluating.
 
