@@ -101,7 +101,10 @@ jobs:
           path: apps/frontend-app/dist
           if-no-files-found: error
 
-      # cmdline-tools 16+ sdkmanager requires JDK 17+. App bytecode stays on Java 11 via Gradle.
+      - name: Ensure Sparkling native module paths
+        if: steps.mode.outputs.android == 'true'
+        run: npm run ensure:native-deps -w frontend-app
+
       - name: Setup JDK 17
         if: steps.mode.outputs.android == 'true'
         uses: actions/setup-java@v4

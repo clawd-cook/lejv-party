@@ -40,6 +40,7 @@
     "test": "vitest run --passWithNoTests",
     "run:android": "sparkling-app-cli run:android",
     "run:ios": "sparkling-app-cli run:ios --copy",
-    "preview:qr": "node ./scripts/generate-preview-qr.mjs"
+    "preview:qr": "node ./scripts/generate-preview-qr.mjs",
+    "ensure:native-deps": "node ./scripts/ensure-native-node-modules.mjs"
   }
 }
