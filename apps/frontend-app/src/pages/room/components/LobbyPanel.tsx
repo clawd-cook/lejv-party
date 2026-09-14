@@ -103,6 +103,7 @@ export function LobbyPanel(props: Props) {
   )
 
   const onStart = useCallback(() => {
+    'background only'
     if (!canStart || starting) return
     setStarting(true)
     setError(null)

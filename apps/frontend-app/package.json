@@ -26,6 +26,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@types/react": "^18.3.20",
     "@vitest/coverage-v8": "^4.0.18",
+    "agent-lynx": "^0.14.2",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "sparkling-app-cli": "~2.0.1",
@@ -43,6 +44,8 @@
     "run:android": "sparkling-app-cli run:android",
     "run:ios": "sparkling-app-cli run:ios --copy",
     "preview:qr": "node ./scripts/generate-preview-qr.mjs",
-    "ensure:native-deps": "node ./scripts/ensure-native-node-modules.mjs"
+    "ensure:native-deps": "node ./scripts/ensure-native-node-modules.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "devtool": "npm exec -- agent-lynx"
   }
 }

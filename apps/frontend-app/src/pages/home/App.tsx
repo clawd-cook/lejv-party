@@ -48,6 +48,7 @@ export function App(props: { onMounted?: () => void }) {
   }, [])
 
   const onCreate = useCallback(() => {
+    'background only'
     setCreateError(null)
     const nickname = validateNickname(createNickname)
     if (!nickname) {
@@ -75,6 +76,7 @@ export function App(props: { onMounted?: () => void }) {
   }, [createNickname, creating, openRoom])
 
   const onJoin = useCallback(() => {
+    'background only'
     setJoinError(null)
     const nickname = validateNickname(joinNickname)
     if (!nickname) {

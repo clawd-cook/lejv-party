@@ -6,7 +6,7 @@ const DEFAULT_BASE_URL = 'https://www.lejv-party-backend.casa'
 let configured = false
 
 function resolveBaseUrl(): string {
-  const props = lynx.__globalProps as Record<string, unknown> | undefined
+  const props = lynx.__globalProps as unknown as Record<string, unknown> | undefined
   const nested =
     (props?.query as Record<string, unknown> | undefined) ??
     (props?.queryItems as Record<string, unknown> | undefined) ??

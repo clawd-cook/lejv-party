@@ -21,6 +21,7 @@ export function EndedPanel(props: Props) {
   const lastArtist = props.game.current?.artist
 
   const onClose = useCallback(() => {
+    'background only'
     close()
   }, [])
 

@@ -5,6 +5,7 @@ import * as router from 'sparkling-navigation'
  * (console.error only). Wrap as a Promise for call sites.
  */
 export function openScheme(scheme: string): Promise<void> {
+  'background only'
   return new Promise((resolve, reject) => {
     router.open({ scheme }, (result) => {
       if (result.code === 1) {

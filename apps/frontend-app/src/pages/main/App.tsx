@@ -14,6 +14,7 @@ export function App(props: { onMounted?: () => void }) {
   }, [props])
 
   const openSecondPage = useCallback(() => {
+    'background only'
     void openScheme(secondPageScheme)
   }, [secondPageScheme])
 

@@ -10,6 +10,7 @@ export function App(props: { onMounted?: () => void }) {
   }, [props])
 
   const onClose = useCallback(() => {
+    'background only'
     close()
   }, [])
 
